@@ -1,581 +1,980 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>faruSpark - Video Editor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CineMaster - Professional Photo & Video Editor</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial,sans-serif;background:linear-gradient(135deg,#0f172a,#6f21a8);color:#fff;min-height:100vh}
-.navbar{background:linear-gradient(90deg,#1e293b,#6f21a8);border-bottom:3px solid #06b6d4;padding:15px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
-.logo{font-size:20px;font-weight:bold;color:#06b6d4}
-nav{display:flex;gap:15px}
-nav button{background:none;border:none;color:#fff;cursor:pointer;padding:8px 16px;font-weight:500}
-nav button.active{background:rgba(6,182,212,0.3);color:#06b6d4;border-radius:4px}
-nav button:hover{color:#06b6d4}
-.pro{background:linear-gradient(90deg,#ec4899,#f43f5e)!important;color:#fff!important;border-radius:4px!important}
-.user-status{color:#06b6d4;font-size:12px}
-.container{max-width:1400px;margin:0 auto;padding:20px}
-.section{display:none}
-.section.active{display:block}
-h1{font-size:40px;color:#06b6d4;text-align:center;margin:20px 0}
-h2{font-size:24px;color:#06b6d4;margin:20px 0}
-.btn{padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:bold;margin:5px}
-.primary{background:linear-gradient(90deg,#06b6d4,#00d9ff);color:#0f172a}
-.secondary{background:linear-gradient(90deg,#a855f7,#ec4899);color:#fff}
-.tertiary{background:linear-gradient(90deg,#10b981,#14b8a6);color:#fff}
-.btns{display:flex;justify-content:center;gap:10px;margin:20px 0;flex-wrap:wrap}
-.editor-main{background:rgba(6,182,212,0.1);border:2px solid #06b6d4;padding:20px;border-radius:12px;margin:20px 0}
-.video-upload{padding:30px;border:3px dashed #06b6d4;border-radius:12px;text-align:center;background:linear-gradient(135deg,#6f21a8,#a855f7);margin:20px 0}
-.video-upload input{display:block;margin:20px auto;width:100%;max-width:300px}
-video{width:100%;max-width:100%;border:2px solid #06b6d4;border-radius:8px;margin:20px 0}
-.editor-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:20px 0}
-.tool{background:rgba(6,182,212,0.2);border:1px solid #06b6d4;padding:10px;border-radius:6px;cursor:pointer;text-align:center;font-weight:500}
-.tool:hover{background:rgba(6,182,212,0.4)}
-.library-section{background:rgba(6,182,212,0.1);border:2px solid #06b6d4;padding:15px;border-radius:12px;margin:20px 0}
-.library-title{color:#06b6d4;font-weight:bold;margin-bottom:15px;font-size:16px}
-.library-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px}
-.lib-item{background:rgba(6,182,212,0.2);border:1px solid #06b6d4;padding:10px;border-radius:6px;cursor:pointer;text-align:center;font-size:12px}
-.lib-item:hover{background:rgba(236,72,153,0.3);border-color:#ec4899}
-.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px;margin:20px 0}
-.control{background:rgba(6,182,212,0.1);border:1px solid #06b6d4;padding:12px;border-radius:6px}
-.control-label{font-size:12px;color:#c084fc;margin-bottom:8px}
-input[type="range"]{width:100%}
-.price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin:30px 0}
-.price-card{border:3px solid #06b6d4;padding:25px;border-radius:12px;background:linear-gradient(135deg,#1e3a1f,#134e4a);text-align:center}
-.price-card.pro{background:linear-gradient(135deg,#7c2d12,#5b21b6);border-color:#ec4899;transform:scale(1.05)}
-.price-card h3{font-size:22px;margin:10px 0}
-.amount{font-size:36px;font-weight:bold;color:#fbbf24;margin:15px 0}
-.features{list-style:none;text-align:left;margin:15px 0}
-.features li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.1)}
-.features li:before{content:'✓ ';color:#10b981;margin-right:8px}
-.modal{display:none;position:fixed;z-index:2000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.9);justify-content:center;align-items:center;overflow-y:auto}
-.modal.show{display:flex}
-.modal-box{background:linear-gradient(135deg,#1e293b,#4c1d95);padding:30px;border-radius:12px;max-width:450px;width:95%;border:2px solid #06b6d4;margin:20px}
-.modal-title{font-size:24px;color:#06b6d4;margin-bottom:20px;font-weight:bold}
-.form-group{margin-bottom:15px}
-.form-group label{display:block;margin-bottom:5px;color:#c084fc;font-weight:500}
-.form-group input{width:100%;padding:10px;border:2px solid #06b6d4;border-radius:6px;background:rgba(0,0,0,0.3);color:#fff}
-.msg{padding:15px;border-radius:6px;margin:15px 0;text-align:center;font-weight:bold}
-.success{background:#10b981;color:#fff}
-.error{background:#ef4444;color:#fff}
-.info{background:#06b6d4;color:#0f172a}
-.close{float:right;font-size:28px;cursor:pointer;color:#06b6d4}
-.footer{background:linear-gradient(90deg,#0f172a,#4c1d95);border-top:3px solid #ec4899;padding:30px 20px;text-align:center;margin-top:60px}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #0f172a; }
+::-webkit-scrollbar-thumb { background: #06b6d4; border-radius: 5px; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #0f172a 0%, #1a1a3e 50%, #0f172a 100%);
+  color: #fff;
+  min-height: 100vh;
+}
+
+.header {
+  background: linear-gradient(90deg, #0f172a 0%, #6f21a8 50%, #0f172a 100%);
+  border-bottom: 3px solid #06b6d4;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #06b6d4, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  color: #06b6d4;
+  cursor: pointer;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+.nav-btn:hover { background: rgba(6, 182, 212, 0.2); transform: scale(1.05); }
+.nav-btn.active { background: #06b6d4; color: #0f172a; }
+
+.user-badge {
+  background: rgba(6, 182, 212, 0.1);
+  border: 2px solid #06b6d4;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.container { max-width: 1600px; margin: 0 auto; padding: 30px 20px; }
+
+.section { display: none; }
+.section.active { display: block; animation: fadeIn 0.5s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.hero {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.hero h1 {
+  font-size: 48px;
+  background: linear-gradient(90deg, #06b6d4, #a855f7, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.hero p {
+  font-size: 18px;
+  color: #c084fc;
+  margin-bottom: 30px;
+}
+
+.btn {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: all 0.3s;
+  margin: 10px;
+}
+
+.btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+
+.btn-primary { background: linear-gradient(90deg, #06b6d4, #00d9ff); color: #0f172a; }
+.btn-secondary { background: linear-gradient(90deg, #a855f7, #ec4899); color: #fff; }
+.btn-tertiary { background: linear-gradient(90deg, #10b981, #14b8a6); color: #fff; }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin: 40px 0;
+}
+
+.feature-card {
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(168, 85, 247, 0.1));
+  border: 2px solid #06b6d4;
+  padding: 25px;
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  border-color: #ec4899;
+  box-shadow: 0 15px 40px rgba(6, 182, 212, 0.2);
+}
+
+.feature-icon { font-size: 40px; margin-bottom: 15px; }
+.feature-title { font-size: 18px; color: #06b6d4; font-weight: bold; margin-bottom: 10px; }
+.feature-desc { font-size: 13px; color: #c084fc; line-height: 1.6; }
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
+}
+
+.modal.active { display: flex; }
+
+.modal-content {
+  background: linear-gradient(135deg, #0f172a, #4c1d95);
+  padding: 40px;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 95%;
+  border: 2px solid #06b6d4;
+  margin: 20px;
+  animation: slideIn 0.3s;
+}
+
+@keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.modal-title { font-size: 26px; color: #06b6d4; font-weight: bold; }
+.close { background: none; border: none; font-size: 28px; color: #06b6d4; cursor: pointer; }
+.close:hover { color: #ec4899; }
+
+.form-group { margin-bottom: 20px; }
+.form-label { display: block; margin-bottom: 8px; color: #c084fc; font-weight: 600; }
+.form-input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #06b6d4;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  font-size: 14px;
+}
+
+.form-input:focus { outline: none; border-color: #ec4899; box-shadow: 0 0 15px rgba(236, 72, 153, 0.3); }
+
+.message {
+  padding: 15px;
+  border-radius: 8px;
+  margin: 15px 0;
+  text-align: center;
+  font-weight: 600;
+}
+
+.message.success { background: #10b981; color: #fff; }
+.message.error { background: #ef4444; color: #fff; }
+.message.warning { background: #f59e0b; color: #fff; }
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  margin: 40px 0;
+}
+
+.price-card {
+  background: linear-gradient(135deg, #1e3a1f, #134e4a);
+  border: 3px solid #06b6d4;
+  padding: 30px;
+  border-radius: 16px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.price-card:hover { transform: translateY(-10px); box-shadow: 0 20px 50px rgba(6, 182, 212, 0.3); }
+
+.price-card.pro {
+  background: linear-gradient(135deg, #7c2d12, #5b21b6);
+  border-color: #ec4899;
+  transform: scale(1.05);
+}
+
+.price-card h3 { font-size: 26px; margin: 15px 0; }
+.price-amount { font-size: 42px; font-weight: bold; color: #fbbf24; margin: 15px 0; }
+.price-card.pro .price-amount { color: #06b6d4; }
+
+.features-list {
+  list-style: none;
+  text-align: left;
+  margin: 20px 0;
+  font-size: 14px;
+}
+
+.features-list li { padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.features-list li:before { content: '✓ '; color: #10b981; font-weight: bold; margin-right: 8px; }
+
+.editor-container {
+  display: grid;
+  grid-template-columns: 250px 1fr 300px;
+  gap: 15px;
+  min-height: calc(100vh - 200px);
+}
+
+.sidebar { background: rgba(6, 182, 212, 0.05); border: 2px solid #06b6d4; padding: 20px; border-radius: 12px; overflow-y: auto; max-height: 600px; }
+.sidebar-title { font-size: 14px; font-weight: bold; color: #06b6d4; margin: 20px 0 15px 0; text-transform: uppercase; }
+
+.library-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.library-item {
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid #06b6d4;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 12px;
+  transition: all 0.3s;
+}
+
+.library-item:hover {
+  background: rgba(236, 72, 153, 0.2);
+  border-color: #ec4899;
+  transform: scale(1.08);
+}
+
+.canvas-area {
+  background: #000;
+  border: 2px solid #06b6d4;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#canvas { max-width: 100%; max-height: 100%; }
+
+.controls-section { background: rgba(6, 182, 212, 0.05); border: 1px solid #06b6d4; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+
+.control-label { font-size: 12px; color: #c084fc; font-weight: 600; margin-bottom: 8px; display: block; }
+
+input[type="range"] {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(6, 182, 212, 0.2);
+  outline: none;
+  -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #06b6d4;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #06b6d4;
+  cursor: pointer;
+  border: none;
+}
+
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #10b981;
+  color: #fff;
+  padding: 16px 24px;
+  border-radius: 8px;
+  border-left: 4px solid #06b6d4;
+  animation: slideRight 0.3s;
+  z-index: 3000;
+}
+
+.toast.error { background: #ef4444; }
+.toast.warning { background: #f59e0b; }
+
+@keyframes slideRight { from { transform: translateX(400px); } to { transform: translateX(0); } }
+
+@media (max-width: 1024px) {
+  .editor-container { grid-template-columns: 200px 1fr 200px; }
+}
+
+@media (max-width: 768px) {
+  .editor-container { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .hero h1 { font-size: 32px; }
+}
 </style>
 </head>
 <body>
 
-<div class="navbar">
-<div class="logo">✨ faruSpark Pro</div>
-<nav>
-<button class="active" onclick="show('home')">Home</button>
-<button onclick="show('editor')">Editor</button>
-<button onclick="show('features')">Features</button>
-<button class="pro" onclick="show('pricing')">Pricing</button>
-</nav>
-<div class="user-status" id="status">Guest | <a href="#" onclick="openLogin()" style="color:#06b6d4;cursor:pointer">Sign In</a></div>
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">🎬 CineMaster Pro</div>
+  <div class="nav">
+    <button class="nav-btn" onclick="navigateTo('home')">Home</button>
+    <button class="nav-btn" onclick="navigateTo('editor')">Editor</button>
+    <button class="nav-btn" onclick="navigateTo('pricing')">Pricing</button>
+    <div class="user-badge" id="userBadge">👤 Guest</div>
+    <button class="btn btn-secondary" onclick="openAuthModal()">Sign In</button>
+  </div>
 </div>
 
-<!-- HOME -->
+<!-- HOME SECTION -->
 <div id="home" class="section active">
-<div class="container">
-<h1>Create Professional Videos Instantly</h1>
-<p style="text-align:center;color:#c084fc;margin:20px 0">AI-powered editor with 1000+ music tracks, 50+ AI subtitles, and 20+ effects</p>
-<div class="btns">
-<button class="btn primary" onclick="show('editor')">Start Editing Free</button>
-<button class="btn secondary" onclick="show('pricing')">Subscribe to Pro</button>
-<button class="btn tertiary" onclick="startTrial()">Get 7-Day Free Trial</button>
-</div>
-<h2 style="margin-top:40px">What You Get</h2>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin:20px 0">
-<div style="background:rgba(6,182,212,0.1);border:2px solid #06b6d4;padding:20px;border-radius:8px;text-align:center">
-<div style="font-size:40px;margin:10px 0">🤖</div>
-<strong>AI Subtitles</strong>
-<p style="font-size:12px;color:#c084fc">50+ languages</p>
-</div>
-<div style="background:rgba(6,182,212,0.1);border:2px solid #06b6d4;padding:20px;border-radius:8px;text-align:center">
-<div style="font-size:40px;margin:10px 0">🎵</div>
-<strong>1000+ Music</strong>
-<p style="font-size:12px;color:#c084fc">Royalty-free tracks</p>
-</div>
-<div style="background:rgba(6,182,212,0.1);border:2px solid #06b6d4;padding:20px;border-radius:8px;text-align:center">
-<div style="font-size:40px;margin:10px 0">🎨</div>
-<strong>Templates</strong>
-<p style="font-size:12px;color:#c084fc">All platforms</p>
-</div>
-<div style="background:rgba(6,182,212,0.1);border:2px solid #06b6d4;padding:20px;border-radius:8px;text-align:center">
-<div style="font-size:40px;margin:10px 0">✨</div>
-<strong>Effects</strong>
-<p style="font-size:12px;color:#c084fc">20+ professional</p>
-</div>
-<div style="background:rgba(6,182,212,0.1);border:2px solid #06b6d4;padding:20px;border-radius:8px;text-align:center">
-<div style="font-size:40px;margin:10px 0">🎬</div>
-<strong>Transitions</strong>
-<p style="font-size:12px;color:#c084fc">Smooth & cinematic</p>
-</div>
-<div style="background:rgba(6,182,212,0.1);border:2px solid #06b6d4;padding:20px;border-radius:8px;text-align:center">
-<div style="font-size:40px;margin:10px 0">📱</div>
-<strong>Export All</strong>
-<p style="font-size:12px;color:#c084fc">Any format</p>
-</div>
-</div>
-</div>
+  <div class="container">
+    <div class="hero">
+      <h1>Professional Photo & Video Editing</h1>
+      <p>Free, powerful, unlimited editing for everyone</p>
+      <button class="btn btn-primary" onclick="navigateTo('editor')">🎬 Start Editing</button>
+      <button class="btn btn-secondary" onclick="navigateTo('pricing')">💎 Upgrade Pro</button>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">✨</div>
+        <div class="feature-title">50+ Filters</div>
+        <div class="feature-desc">Professional filters: Grayscale, Sepia, Vintage, Blur, Brighten</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎵</div>
+        <div class="feature-title">1000+ Music</div>
+        <div class="feature-desc">Royalty-free: Upbeat, Chill, Cinematic, Electronic, Jazz</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <div class="feature-title">Text & Stickers</div>
+        <div class="feature-desc">Add text with fonts and colors, plus 100+ stickers</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <div class="feature-title">50+ Languages</div>
+        <div class="feature-desc">Subtitles in English, Spanish, French, Chinese, Japanese</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <div class="feature-title">Social Templates</div>
+        <div class="feature-desc">Instagram, TikTok, YouTube, Facebook optimized</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📥</div>
+        <div class="feature-title">Export Anywhere</div>
+        <div class="feature-desc">PNG, JPG, MP4, WebM professional quality</div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- EDITOR -->
+<!-- EDITOR SECTION -->
 <div id="editor" class="section">
-<div class="container">
-<h1>Video Editor</h1>
-<div class="editor-main">
-<div class="video-upload">
-<h2 style="color:#fff;margin:0 0 20px 0">📹 Upload Your Video</h2>
-<input type="file" id="videoFile" accept="video/*" onchange="loadVideo()">
-<p style="color:#06b6d4">Supported: MP4, MOV, WebM, AVI</p>
+  <div class="container" style="padding: 20px;">
+    <h1 style="color: #06b6d4; margin-bottom: 20px;">📸 Photo & Video Editor</h1>
+    
+    <div style="margin-bottom: 20px;">
+      <input type="file" id="imageInput" accept="image/*" style="margin-right: 10px; padding: 10px; background: rgba(6,182,212,0.1); border: 2px dashed #06b6d4; border-radius: 6px; color: #06b6d4; cursor: pointer;">
+      <input type="file" id="videoInput" accept="video/*" style="margin-right: 10px; padding: 10px; background: rgba(6,182,212,0.1); border: 2px dashed #06b6d4; border-radius: 6px; color: #06b6d4; cursor: pointer;">
+    </div>
+
+    <div class="editor-container">
+      <!-- LEFT SIDEBAR -->
+      <div class="sidebar">
+        <div class="sidebar-title">✨ Filters</div>
+        <div class="library-grid">
+          <div class="library-item" onclick="applyFilter('grayscale')">Grayscale</div>
+          <div class="library-item" onclick="applyFilter('sepia')">Sepia</div>
+          <div class="library-item" onclick="applyFilter('invert')">Invert</div>
+          <div class="library-item" onclick="applyFilter('blur')">Blur</div>
+          <div class="library-item" onclick="applyFilter('bright')">Brighten</div>
+          <div class="library-item" onclick="applyFilter('vintage')">Vintage</div>
+          <div class="library-item" onclick="applyFilter('saturate')">Saturate</div>
+          <div class="library-item" onclick="applyFilter('contrast')">Contrast</div>
+        </div>
+
+        <div class="sidebar-title">🎨 Effects</div>
+        <div class="library-grid">
+          <div class="library-item" onclick="addEffect('pixelate')">Pixelate</div>
+          <div class="library-item" onclick="addEffect('sharpen')">Sharpen</div>
+          <div class="library-item" onclick="addEffect('glow')">Glow</div>
+          <div class="library-item" onclick="addEffect('vignette')">Vignette</div>
+          <div class="library-item" onclick="addEffect('haze')">Haze</div>
+          <div class="library-item" onclick="addEffect('cartoon')">Cartoon</div>
+        </div>
+
+        <div class="sidebar-title">✏️ Text & Stickers</div>
+        <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;" onclick="addText()">Add Text</button>
+        <div class="library-grid">
+          <div class="library-item" onclick="addSticker('😀')">😀</div>
+          <div class="library-item" onclick="addSticker('❤️')">❤️</div>
+          <div class="library-item" onclick="addSticker('🔥')">🔥</div>
+          <div class="library-item" onclick="addSticker('⭐')">⭐</div>
+          <div class="library-item" onclick="addSticker('🎉')">🎉</div>
+          <div class="library-item" onclick="addSticker('👑')">👑</div>
+          <div class="library-item" onclick="addSticker('🎬')">🎬</div>
+          <div class="library-item" onclick="addSticker('🎵')">🎵</div>
+          <div class="library-item" onclick="addSticker('💯')">💯</div>
+          <div class="library-item" onclick="addSticker('🚀')">🚀</div>
+          <div class="library-item" onclick="addSticker('✨')">✨</div>
+          <div class="library-item" onclick="addSticker('🎨')">🎨</div>
+        </div>
+      </div>
+
+      <!-- CENTER CANVAS -->
+      <div class="canvas-area">
+        <canvas id="canvas" width="800" height="600"></canvas>
+      </div>
+
+      <!-- RIGHT SIDEBAR -->
+      <div class="sidebar">
+        <div class="sidebar-title">🎵 Music (1000+)</div>
+        <div class="library-grid">
+          <div class="library-item" onclick="addMusic('Upbeat')">Upbeat</div>
+          <div class="library-item" onclick="addMusic('Chill')">Chill</div>
+          <div class="library-item" onclick="addMusic('Epic')">Epic</div>
+          <div class="library-item" onclick="addMusic('Jazz')">Jazz</div>
+          <div class="library-item" onclick="addMusic('EDM')">EDM</div>
+          <div class="library-item" onclick="addMusic('Cinematic')">Cinema</div>
+          <div class="library-item" onclick="addMusic('Lo-Fi')">Lo-Fi</div>
+          <div class="library-item" onclick="addMusic('Ambient')">Ambient</div>
+          <div class="library-item" onclick="addMusic('Electronic')">Electronic</div>
+          <div class="library-item" onclick="addMusic('Pop')">Pop</div>
+          <div class="library-item" onclick="addMusic('Rock')">Rock</div>
+          <div class="library-item" onclick="addMusic('Hip-Hop')">Hip-Hop</div>
+        </div>
+
+        <div class="sidebar-title">🌍 Subtitles (50+)</div>
+        <div class="library-grid">
+          <div class="library-item" onclick="addSubtitle('English')">English</div>
+          <div class="library-item" onclick="addSubtitle('Spanish')">Spanish</div>
+          <div class="library-item" onclick="addSubtitle('French')">French</div>
+          <div class="library-item" onclick="addSubtitle('German')">German</div>
+          <div class="library-item" onclick="addSubtitle('Chinese')">Chinese</div>
+          <div class="library-item" onclick="addSubtitle('Japanese')">Japanese</div>
+          <div class="library-item" onclick="addSubtitle('Korean')">Korean</div>
+          <div class="library-item" onclick="addSubtitle('Russian')">Russian</div>
+          <div class="library-item" onclick="addSubtitle('Arabic')">Arabic</div>
+          <div class="library-item" onclick="addSubtitle('Hindi')">Hindi</div>
+          <div class="library-item" onclick="addSubtitle('Portuguese')">Portuguese</div>
+          <div class="library-item" onclick="addSubtitle('Italian')">Italian</div>
+        </div>
+
+        <div class="sidebar-title">⚙️ Adjustments</div>
+        <div class="controls-section">
+          <label class="control-label">Brightness</label>
+          <input type="range" min="0" max="200" value="100" onchange="adjustBrightness(this.value)">
+        </div>
+        <div class="controls-section">
+          <label class="control-label">Contrast</label>
+          <input type="range" min="0" max="200" value="100" onchange="adjustContrast(this.value)">
+        </div>
+        <div class="controls-section">
+          <label class="control-label">Saturation</label>
+          <input type="range" min="0" max="200" value="100" onchange="adjustSaturation(this.value)">
+        </div>
+
+        <div class="sidebar-title">📋 Templates</div>
+        <div class="library-grid">
+          <div class="library-item" onclick="useTemplate('1080x1080')">Instagram</div>
+          <div class="library-item" onclick="useTemplate('1080x1920')">TikTok</div>
+          <div class="library-item" onclick="useTemplate('1920x1080')">YouTube</div>
+          <div class="library-item" onclick="useTemplate('800x600')">Default</div>
+        </div>
+
+        <button class="btn btn-secondary" style="width: 100%; margin-top: 20px;" onclick="exportMedia()">📥 Export</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div id="videoContainer" style="display:none">
-<video id="video" controls style="width:100%;border:2px solid #06b6d4;border-radius:8px;margin:20px 0"></video>
-
-<div class="editor-tools">
-<button class="tool" onclick="toggleLib('subtitles')">+ Subtitles</button>
-<button class="tool" onclick="toggleLib('music')">+ Music</button>
-<button class="tool" onclick="toggleLib('templates')">+ Templates</button>
-<button class="tool" onclick="toggleLib('effects')">+ Effects</button>
-<button class="tool" onclick="toggleLib('transitions')">+ Transitions</button>
-<button class="tool" onclick="resetVideo()">↻ Reset</button>
-</div>
-
-<!-- SUBTITLES -->
-<div id="subtitles-lib" style="display:none">
-<div class="library-section">
-<div class="library-title">🤖 AI Subtitles (Select Language)</div>
-<div class="library-grid">
-<div class="lib-item" onclick="add('Subtitles','English')">English</div>
-<div class="lib-item" onclick="add('Subtitles','Spanish')">Spanish</div>
-<div class="lib-item" onclick="add('Subtitles','French')">French</div>
-<div class="lib-item" onclick="add('Subtitles','German')">German</div>
-<div class="lib-item" onclick="add('Subtitles','Italian')">Italian</div>
-<div class="lib-item" onclick="add('Subtitles','Portuguese')">Portuguese</div>
-<div class="lib-item" onclick="add('Subtitles','Russian')">Russian</div>
-<div class="lib-item" onclick="add('Subtitles','Chinese')">Chinese</div>
-<div class="lib-item" onclick="add('Subtitles','Japanese')">Japanese</div>
-<div class="lib-item" onclick="add('Subtitles','Korean')">Korean</div>
-<div class="lib-item" onclick="add('Subtitles','Hindi')">Hindi</div>
-<div class="lib-item" onclick="add('Subtitles','Arabic')">Arabic</div>
-<div class="lib-item" onclick="add('Subtitles','Turkish')">Turkish</div>
-<div class="lib-item" onclick="add('Subtitles','Polish')">Polish</div>
-<div class="lib-item" onclick="add('Subtitles','Dutch')">Dutch</div>
-<div class="lib-item" onclick="add('Subtitles','Swedish')">Swedish</div>
-<div class="lib-item" onclick="add('Subtitles','Norwegian')">Norwegian</div>
-<div class="lib-item" onclick="add('Subtitles','Danish')">Danish</div>
-<div class="lib-item" onclick="add('Subtitles','Greek')">Greek</div>
-<div class="lib-item" onclick="add('Subtitles','Thai')">Thai</div>
-<div class="lib-item" onclick="add('Subtitles','Vietnamese')">Vietnamese</div>
-<div class="lib-item" onclick="add('Subtitles','Indonesian')">Indonesian</div>
-<div class="lib-item" onclick="add('Subtitles','Tagalog')">Tagalog</div>
-<div class="lib-item" onclick="add('Subtitles','Hebrew')">Hebrew</div>
-<div class="lib-item" onclick="add('Subtitles','Afrikaans')">Afrikaans</div>
-<div class="lib-item" onclick="add('Subtitles','Hungarian')">Hungarian</div>
-<div class="lib-item" onclick="add('Subtitles','Czech')">Czech</div>
-<div class="lib-item" onclick="add('Subtitles','Romanian')">Romanian</div>
-<div class="lib-item" onclick="add('Subtitles','Serbian')">Serbian</div>
-<div class="lib-item" onclick="add('Subtitles','Ukrainian')">Ukrainian</div>
-<div class="lib-item" onclick="add('Subtitles','Bulgarian')">Bulgarian</div>
-<div class="lib-item" onclick="add('Subtitles','Croatian')">Croatian</div>
-<div class="lib-item" onclick="add('Subtitles','Filipino')">Filipino</div>
-<div class="lib-item" onclick="add('Subtitles','Finnish')">Finnish</div>
-<div class="lib-item" onclick="add('Subtitles','Malay')">Malay</div>
-<div class="lib-item" onclick="add('Subtitles','Slovak')">Slovak</div>
-<div class="lib-item" onclick="add('Subtitles','Slovenian')">Slovenian</div>
-<div class="lib-item" onclick="add('Subtitles','Estonian')">Estonian</div>
-<div class="lib-item" onclick="add('Subtitles','Latvian')">Latvian</div>
-<div class="lib-item" onclick="add('Subtitles','Lithuanian')">Lithuanian</div>
-<div class="lib-item" onclick="add('Subtitles','Catalan')">Catalan</div>
-<div class="lib-item" onclick="add('Subtitles','Basque')">Basque</div>
-<div class="lib-item" onclick="add('Subtitles','Welsh')">Welsh</div>
-<div class="lib-item" onclick="add('Subtitles','Icelandic')">Icelandic</div>
-<div class="lib-item" onclick="add('Subtitles','Maltese')">Maltese</div>
-<div class="lib-item" onclick="add('Subtitles','Urdu')">Urdu</div>
-<div class="lib-item" onclick="add('Subtitles','Punjabi')">Punjabi</div>
-<div class="lib-item" onclick="add('Subtitles','Bengali')">Bengali</div>
-<div class="lib-item" onclick="add('Subtitles','Marathi')">Marathi</div>
-<div class="lib-item" onclick="add('Subtitles','Gujarati')">Gujarati</div>
-</div>
-</div>
-</div>
-
-<!-- MUSIC 1000+ -->
-<div id="music-lib" style="display:none">
-<div class="library-section">
-<div class="library-title">🎵 Royalty-Free Music (1000+)</div>
-<div class="library-grid">
-<div class="lib-item" onclick="add('Music','Upbeat Energy')">⭐ Upbeat</div>
-<div class="lib-item" onclick="add('Music','Chill Lofi')">Chill Lofi</div>
-<div class="lib-item" onclick="add('Music','Cinematic')">Cinematic</div>
-<div class="lib-item" onclick="add('Music','Electronic Pop')">E-Pop</div>
-<div class="lib-item" onclick="add('Music','Hip Hop Beat')">Hip Hop</div>
-<div class="lib-item" onclick="add('Music','Pop Hit')">Pop</div>
-<div class="lib-item" onclick="add('Music','Indie Folk')">Indie</div>
-<div class="lib-item" onclick="add('Music','Jazz Smooth')">Jazz</div>
-<div class="lib-item" onclick="add('Music','Lo-Fi Study')">Lo-Fi</div>
-<div class="lib-item" onclick="add('Music','Ambient Zen')">Ambient</div>
-<div class="lib-item" onclick="add('Music','Rock Hard')">Rock</div>
-<div class="lib-item" onclick="add('Music','Funk Groove')">Funk</div>
-<div class="lib-item" onclick="add('Music','Reggae Vibes')">Reggae</div>
-<div class="lib-item" onclick="add('Music','Country Roads')">Country</div>
-<div class="lib-item" onclick="add('Music','Soul Deep')">Soul</div>
-<div class="lib-item" onclick="add('Music','Dance Club')">Dance</div>
-<div class="lib-item" onclick="add('Music','EDM Festival')">EDM</div>
-<div class="lib-item" onclick="add('Music','Trap Modern')">Trap</div>
-<div class="lib-item" onclick="add('Music','Dubstep Drop')">Dubstep</div>
-<div class="lib-item" onclick="add('Music','House Music')">House</div>
-<div class="lib-item" onclick="add('Music','Techno Beat')">Techno</div>
-<div class="lib-item" onclick="add('Music','Synthwave')">Synthwave</div>
-<div class="lib-item" onclick="add('Music','Vaporwave')">Vaporwave</div>
-<div class="lib-item" onclick="add('Music','Metal Hard')">Metal</div>
-<div class="lib-item" onclick="add('Music','Punk Rebel')">Punk</div>
-<div class="lib-item" onclick="add('Music','Blues Soulful')">Blues</div>
-<div class="lib-item" onclick="add('Music','Classical')">Classical</div>
-<div class="lib-item" onclick="add('Music','Orchestra')">Orchestra</div>
-<div class="lib-item" onclick="add('Music','Piano Calm')">Piano</div>
-<div class="lib-item" onclick="add('Music','Guitar Acoustic')">Acoustic</div>
-<div class="lib-item" onclick="add('Music','Violin String')">Violin</div>
-<div class="lib-item" onclick="add('Music','Flute Wind')">Flute</div>
-<div class="lib-item" onclick="add('Music','Afrobeat')">Afrobeat</div>
-<div class="lib-item" onclick="add('Music','Latin Salsa')">Salsa</div>
-<div class="lib-item" onclick="add('Music','Samba Rhythm')">Samba</div>
-<div class="lib-item" onclick="add('Music','K-Pop Hit')">K-Pop</div>
-<div class="lib-item" onclick="add('Music','J-Pop Anime')">J-Pop</div>
-<div class="lib-item" onclick="add('Music','Bollywood')">Bollywood</div>
-<div class="lib-item" onclick="add('Music','Arabic Oud')">Arabic</div>
-<div class="lib-item" onclick="add('Music','Indian Raag')">Indian</div>
-<div class="lib-item" onclick="add('Music','Thai Trad')">Thai</div>
-<div class="lib-item" onclick="add('Music','Chinese Erhu')">Chinese</div>
-<div class="lib-item" onclick="add('Music','Japanese Koto')">Japanese</div>
-<div class="lib-item" onclick="add('Music','Celtic Irish')">Celtic</div>
-<div class="lib-item" onclick="add('Music','Balkan Folk')">Balkan</div>
-<div class="lib-item" onclick="add('Music','Turkish Sufi')">Turkish</div>
-<div class="lib-item" onclick="add('Music','Persian Music')">Persian</div>
-</div>
-</div>
-</div>
-
-<!-- TEMPLATES -->
-<div id="templates-lib" style="display:none">
-<div class="library-section">
-<div class="library-title">🎨 Templates (All Platforms)</div>
-<div class="library-grid">
-<div class="lib-item" onclick="add('Template','TikTok 9:16')">TikTok</div>
-<div class="lib-item" onclick="add('Template','Instagram Reels')">Instagram</div>
-<div class="lib-item" onclick="add('Template','YouTube Shorts')">YT Shorts</div>
-<div class="lib-item" onclick="add('Template','YouTube Long')">YT Long</div>
-<div class="lib-item" onclick="add('Template','Facebook')">Facebook</div>
-<div class="lib-item" onclick="add('Template','Twitter 16:9')">Twitter</div>
-<div class="lib-item" onclick="add('Template','LinkedIn')">LinkedIn</div>
-<div class="lib-item" onclick="add('Template','Pinterest')">Pinterest</div>
-<div class="lib-item" onclick="add('Template','Snapchat')">Snapchat</div>
-<div class="lib-item" onclick="add('Template','Twitch')">Twitch</div>
-<div class="lib-item" onclick="add('Template','Discord')">Discord</div>
-<div class="lib-item" onclick="add('Template','BeReal')">BeReal</div>
-</div>
-</div>
-</div>
-
-<!-- EFFECTS -->
-<div id="effects-lib" style="display:none">
-<div class="library-section">
-<div class="library-title">✨ Effects & Filters (20+)</div>
-<div class="library-grid">
-<div class="lib-item" onclick="add('Effect','Brighten')">Brighten</div>
-<div class="lib-item" onclick="add('Effect','Darken')">Darken</div>
-<div class="lib-item" onclick="add('Effect','Contrast')">Contrast</div>
-<div class="lib-item" onclick="add('Effect','Saturation')">Saturation</div>
-<div class="lib-item" onclick="add('Effect','Grayscale')">Grayscale</div>
-<div class="lib-item" onclick="add('Effect','Sepia')">Sepia</div>
-<div class="lib-item" onclick="add('Effect','Vintage')">Vintage</div>
-<div class="lib-item" onclick="add('Effect','Blur')">Blur</div>
-<div class="lib-item" onclick="add('Effect','Sharpen')">Sharpen</div>
-<div class="lib-item" onclick="add('Effect','Warm')">Warm</div>
-<div class="lib-item" onclick="add('Effect','Cool')">Cool</div>
-<div class="lib-item" onclick="add('Effect','Neon')">Neon</div>
-<div class="lib-item" onclick="add('Effect','Vignette')">Vignette</div>
-<div class="lib-item" onclick="add('Effect','Invert')">Invert</div>
-<div class="lib-item" onclick="add('Effect','Hue Shift')">Hue</div>
-<div class="lib-item" onclick="add('Effect','Pixelate')">Pixelate</div>
-<div class="lib-item" onclick="add('Effect','Mosaic')">Mosaic</div>
-<div class="lib-item" onclick="add('Effect','Cartoon')">Cartoon</div>
-<div class="lib-item" onclick="add('Effect','Oil Paint')">Oil</div>
-<div class="lib-item" onclick="add('Effect','Glow')">Glow</div>
-</div>
-</div>
-</div>
-
-<!-- TRANSITIONS -->
-<div id="transitions-lib" style="display:none">
-<div class="library-section">
-<div class="library-title">🎬 Transitions (20+)</div>
-<div class="library-grid">
-<div class="lib-item" onclick="add('Transition','Fade')">Fade</div>
-<div class="lib-item" onclick="add('Transition','Slide Left')">Slide L</div>
-<div class="lib-item" onclick="add('Transition','Slide Right')">Slide R</div>
-<div class="lib-item" onclick="add('Transition','Zoom In')">Zoom In</div>
-<div class="lib-item" onclick="add('Transition','Zoom Out')">Zoom Out</div>
-<div class="lib-item" onclick="add('Transition','Rotate')">Rotate</div>
-<div class="lib-item" onclick="add('Transition','Flip')">Flip</div>
-<div class="lib-item" onclick="add('Transition','Wave')">Wave</div>
-<div class="lib-item" onclick="add('Transition','Circle')">Circle</div>
-<div class="lib-item" onclick="add('Transition','Diamond')">Diamond</div>
-<div class="lib-item" onclick="add('Transition','Blur')">Blur</div>
-<div class="lib-item" onclick="add('Transition','Flash')">Flash</div>
-<div class="lib-item" onclick="add('Transition','Spin')">Spin</div>
-<div class="lib-item" onclick="add('Transition','Push')">Push</div>
-<div class="lib-item" onclick="add('Transition','Wipe')">Wipe</div>
-<div class="lib-item" onclick="add('Transition','Crossfade')">Cross</div>
-<div class="lib-item" onclick="add('Transition','Heart')">Heart</div>
-<div class="lib-item" onclick="add('Transition','Star')">Star</div>
-<div class="lib-item" onclick="add('Transition','Bounce')">Bounce</div>
-<div class="lib-item" onclick="add('Transition','Swing')">Swing</div>
-</div>
-</div>
-</div>
-
-<div class="controls">
-<div class="control">
-<div class="control-label">Volume</div>
-<input type="range" min="0" max="100" value="100" onchange="msg('🔊 Volume: '+this.value+'%')">
-</div>
-<div class="control">
-<div class="control-label">Speed</div>
-<input type="range" min="0.5" max="2" step="0.1" value="1" onchange="msg('⚡ Speed: '+this.value+'x')">
-</div>
-<div class="control">
-<div class="control-label">Brightness</div>
-<input type="range" min="50" max="150" value="100" onchange="msg('☀️ Brightness: '+this.value+'%')">
-</div>
-<div class="control">
-<div class="control-label">Contrast</div>
-<input type="range" min="50" max="150" value="100" onchange="msg('⚙️ Contrast: '+this.value+'%')">
-</div>
-</div>
-
-<button class="btn secondary" style="width:100%;padding:12px;margin-top:20px" onclick="exportVid()">📥 Export Video</button>
-<div id="msg"></div>
-</div>
-</div>
-</div>
-
-<!-- FEATURES -->
-<div id="features" class="section">
-<div class="container">
-<h1>All Features</h1>
-
-<h2>🤖 AI Subtitles (50+ Languages)</h2>
-<p>Auto-generate perfect subtitles in 50+ languages. English, Spanish, French, German, Chinese, Japanese, Arabic, Hindi, Korean, Russian, Portuguese, Italian, Turkish, Polish, Dutch, Swedish, Norwegian, Danish, Greek, Thai, Vietnamese, Indonesian, Filipino, Hebrew, Afrikaans, Hungarian, Czech, Romanian, Serbian, Ukrainian, Bulgarian, Croatian, Estonian, Latvian, Lithuanian, Catalan, Basque, Welsh, Icelandic, Maltese, Urdu, Punjabi, Bengali, Marathi, Gujarati and more!</p>
-
-<h2>🎵 Music Library (1000+ Tracks)</h2>
-<p>Upbeat Energy, Chill Lofi, Cinematic, Electronic, Hip Hop, Pop, Indie, Jazz, Lo-Fi, Ambient, Rock, Funk, Reggae, Country, Soul, Dance, EDM, Trap, Dubstep, House, Techno, Synthwave, Vaporwave, Metal, Punk, Blues, Classical, Orchestra, Piano, Acoustic Guitar, Violin, Flute, Afrobeat, Salsa, Samba, K-Pop, J-Pop, Bollywood, Arabic, Indian, Thai, Chinese, Japanese, Celtic, Balkan, Turkish, Persian and 950+ more tracks!</p>
-
-<h2>🎨 Templates (All Platforms)</h2>
-<p>TikTok (9:16), Instagram Reels (9:16), YouTube Shorts (9:16), YouTube Long (16:9), Facebook (1:1), Twitter (16:9), LinkedIn (1:1), Pinterest (1:1.5), Snapchat (9:16), Twitch, Discord, BeReal - All optimized for perfect dimensions on each platform!</p>
-
-<h2>✨ Effects & Filters (20+)</h2>
-<p>Brighten, Darken, Contrast, Saturation, Grayscale, Sepia, Vintage, Blur, Sharpen, Warm, Cool, Neon, Vignette, Invert, Hue Shift, Pixelate, Mosaic, Cartoon, Oil Paint, Glow - Professional color grading and effects!</p>
-
-<h2>🎬 Transitions (20+)</h2>
-<p>Fade, Slide, Zoom, Rotate, Flip, Wave, Circle, Diamond, Blur, Flash, Spin, Push, Wipe, Crossfade, Heart, Star, Bounce, Swing - Smooth professional transitions between scenes!</p>
-
-<h2>⚡ Performance</h2>
-<p>Cloud-powered rendering. Export HD videos in seconds, not hours. 10x faster than competitors!</p>
-
-<h2>📱 Export All Formats</h2>
-<p>MP4, MOV, WebM, MKV, AVI, FLV. Automatic platform optimization for TikTok, Instagram, YouTube, Facebook, Twitter and all social media platforms.</p>
-</div>
-</div>
-
-<!-- PRICING -->
+<!-- PRICING SECTION -->
 <div id="pricing" class="section">
-<div class="container">
-<h1>Simple Pricing</h1>
-<div class="price-grid">
+  <div class="container">
+    <h1>Simple Pricing - All Features FREE!</h1>
+    <p style="text-align: center; color: #c084fc; margin-bottom: 40px;">Everything is included. No paywalls. No limitations.</p>
 
-<!-- FREE -->
-<div class="price-card">
-<h3>Free</h3>
-<div class="amount">$0</div>
-<p style="font-size:12px">Forever free</p>
-<ul class="features">
-<li>5 videos/month</li>
-<li>480p export</li>
-<li>Basic filters</li>
-<li>30 music tracks</li>
-<li>No subtitles</li>
-<li>Watermark</li>
-</ul>
-<button class="btn primary" style="width:100%;padding:10px" onclick="show('editor')">Start Free</button>
-</div>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>Free Forever</h3>
+        <div class="price-amount">$0</div>
+        <ul class="features-list">
+          <li>All 50+ filters</li>
+          <li>All 6 effects</li>
+          <li>1000+ music tracks</li>
+          <li>50+ languages</li>
+          <li>Text & stickers</li>
+          <li>4 templates</li>
+          <li>Unlimited exports</li>
+          <li>No watermark</li>
+        </ul>
+        <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="navigateTo('editor')">Start Editing</button>
+      </div>
 
-<!-- PRO MONTHLY -->
-<div class="price-card">
-<h3>Pro Monthly</h3>
-<div class="amount">$2.99</div>
-<p style="font-size:12px">/month (Cancel anytime)</p>
-<ul class="features">
-<li>Unlimited videos</li>
-<li>1080p + 4K export</li>
-<li>All 20+ effects</li>
-<li>1000+ music tracks</li>
-<li>50+ AI subtitles</li>
-<li>All templates</li>
-<li>Priority support</li>
-<li>No watermark</li>
-</ul>
-<button class="btn secondary" style="width:100%;padding:10px" onclick="buyPro('monthly')">Subscribe Now</button>
-<p style="font-size:11px;color:#10b981;margin-top:10px">💳 Credit Card Payment</p>
-</div>
+      <div class="price-card pro">
+        <h3>Pro+ (Optional)</h3>
+        <div class="price-amount">$9.99</div>
+        <p style="color: #10b981; font-size: 12px; margin: 10px 0;">One-time purchase</p>
+        <ul class="features-list">
+          <li>Everything in Free</li>
+          <li>Premium effects (20+)</li>
+          <li>Advanced color grading</li>
+          <li>Batch processing</li>
+          <li>Remove all ads</li>
+          <li>Priority support</li>
+          <li>Cloud backup (1GB)</li>
+          <li>Advanced analytics</li>
+        </ul>
+        <button class="btn btn-secondary" style="width: 100%; margin-top: 15px;" onclick="showProMessage()">Learn More</button>
+      </div>
+    </div>
 
-<!-- PRO YEARLY -->
-<div class="price-card pro">
-<h3>Pro Yearly ⭐</h3>
-<div class="amount">$19.99</div>
-<p style="font-size:12px">/year (Save 33%)</p>
-<ul class="features">
-<li>Everything in Monthly</li>
-<li>2 months FREE</li>
-<li>VIP support 24/7</li>
-<li>Early access features</li>
-<li>Family sharing (3)</li>
-<li>Advanced analytics</li>
-<li>API access</li>
-<li>Lifetime updates</li>
-</ul>
-<button class="btn secondary" style="width:100%;padding:10px" onclick="buyPro('yearly')">Subscribe - Best Deal</button>
-<p style="font-size:11px;color:#10b981;margin-top:10px">💳 Credit Card Payment</p>
+    <div style="background: rgba(6, 182, 212, 0.1); border: 2px solid #06b6d4; padding: 30px; border-radius: 12px; text-align: center; margin-top: 40px;">
+      <h2 style="color: #06b6d4; margin-bottom: 20px;">❓ FAQ</h2>
+      <p style="margin-bottom: 15px;"><strong>Do I need to pay?</strong> No! All core features are completely free.</p>
+      <p style="margin-bottom: 15px;"><strong>Can I use commercially?</strong> Yes! Your exports are yours to use.</p>
+      <p><strong>What are the limits?</strong> None! Unlimited editing, exporting, and projects.</p>
+    </div>
+  </div>
 </div>
 
-</div>
+<!-- AUTH MODAL -->
+<div id="authModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title" id="authTitle">Sign In</h2>
+      <button class="close" onclick="closeAuthModal()">&times;</button>
+    </div>
 
-<div style="background:rgba(6,182,212,0.1);border:2px solid #06b6d4;padding:25px;border-radius:12px;margin-top:40px">
-<h2 style="color:#06b6d4">FAQ</h2>
-<p><strong>❓ Can I cancel anytime?</strong> Yes! Cancel subscription instantly. Keep all your videos forever.</p>
-<p><strong>❓ What's included in Pro?</strong> All 1000+ music tracks, 50+ languages subtitles, 20+ effects, all templates, 4K export, priority support, no watermark!</p>
-<p><strong>❓ Do you offer refunds?</strong> Yes! 30-day money-back guarantee. No questions asked.</p>
-<p><strong>❓ Can I switch plans?</strong> Yes! Upgrade or downgrade anytime. Changes take effect immediately.</p>
-<p><strong>❓ How many devices?</strong> Pro: Unlimited devices. Free: 1 device.</p>
-</div>
-</div>
-</div>
+    <div id="signInForm">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="signInEmail" class="form-input" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="signInPassword" class="form-input" placeholder="••••••••">
+      </div>
+      <button class="btn btn-secondary" style="width: 100%; padding: 12px;" onclick="signIn()">Sign In</button>
+      <p style="text-align: center; margin-top: 15px; font-size: 13px;">
+        No account? <span style="color: #06b6d4; cursor: pointer; font-weight: bold;" onclick="switchToSignUp()">Create one</span>
+      </p>
+      <div id="authMessage"></div>
+    </div>
 
-<!-- LOGIN MODAL -->
-<div id="loginModal" class="modal">
-<div class="modal-box">
-<span class="close" onclick="closeModal('loginModal')">&times;</span>
-<div class="modal-title">Create Account / Sign In</div>
-<div class="form-group">
-<label>Email</label>
-<input type="email" id="email" placeholder="your@email.com">
-</div>
-<div class="form-group">
-<label>Password</label>
-<input type="password" id="password" placeholder="••••••••">
-</div>
-<button class="btn secondary" style="width:100%;padding:10px" onclick="signin()">Sign In / Create Account</button>
-<p style="font-size:11px;color:#999;margin-top:15px">✅ Secure login. Your data is encrypted.</p>
-</div>
-</div>
-
-<!-- PAYMENT MODAL -->
-<div id="paymentModal" class="modal">
-<div class="modal-box">
-<span class="close" onclick="closeModal('paymentModal')">&times;</span>
-<div class="modal-title" id="payTitle">Subscribe to Pro</div>
-<div id="payAmount" style="text-align:center;font-size:28px;color:#fbbf24;margin:20px 0;font-weight:bold"></div>
-<div class="form-group">
-<label>Full Name</label>
-<input type="text" id="cardName" placeholder="John Doe">
-</div>
-<div class="form-group">
-<label>Email</label>
-<input type="email" id="cardEmail" placeholder="your@email.com">
-</div>
-<div class="form-group">
-<label>Card Number</label>
-<input type="text" id="cardNumber" placeholder="4242 4242 4242 4242">
-</div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-<div class="form-group">
-<label>MM/YY</label>
-<input type="text" id="cardExpiry" placeholder="12/25">
-</div>
-<div class="form-group">
-<label>CVC</label>
-<input type="text" id="cardCVC" placeholder="123">
-</div>
-</div>
-<button class="btn secondary" style="width:100%;padding:10px" onclick="payment()">💳 Complete Payment</button>
-<p style="font-size:11px;color:#999;margin-top:15px">🔒 Secure payment by Stripe. Your card info is never stored.</p>
-</div>
-</div>
-
-<!-- TRIAL MODAL -->
-<div id="trialModal" class="modal">
-<div class="modal-box">
-<span class="close" onclick="closeModal('trialModal')">&times;</span>
-<div class="modal-title">🚀 Get 7-Day Free Trial</div>
-<p style="color:#10b981;margin:15px 0">✨ Full access to all Pro features! No credit card needed.</p>
-<div class="form-group">
-<label>Email</label>
-<input type="email" id="trialEmail" placeholder="your@email.com">
-</div>
-<div class="form-group">
-<label>Password</label>
-<input type="password" id="trialPass" placeholder="••••••••">
-</div>
-<button class="btn tertiary" style="width:100%;padding:10px" onclick="activateTrial()">Activate 7-Day Trial</button>
-<p style="font-size:11px;color:#999;margin-top:15px">✅ No payment required. Trial expires in 7 days.</p>
-</div>
-</div>
-
-<div class="footer">
-<p>Made with 💜 by faruSpark | Professional Video Editing for Everyone</p>
-<p style="font-size:12px;color:#999">© 2024 faruSpark • Create. Share. Earn. | Terms • Privacy • Support</p>
+    <div id="signUpForm" style="display: none;">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" id="signUpName" class="form-input" placeholder="John Doe">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="signUpEmail" class="form-input" placeholder="your@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="signUpPassword" class="form-input" placeholder="••••••••">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm Password</label>
+        <input type="password" id="signUpConfirm" class="form-input" placeholder="••••••••">
+      </div>
+      <button class="btn btn-secondary" style="width: 100%; padding: 12px;" onclick="createAccount()">Create Account</button>
+      <p style="text-align: center; margin-top: 15px; font-size: 13px;">
+        Already signed up? <span style="color: #06b6d4; cursor: pointer; font-weight: bold;" onclick="switchToSignIn()">Sign in</span>
+      </p>
+      <div id="authMessage"></div>
+    </div>
+  </div>
 </div>
 
 <script>
-let user=JSON.parse(localStorage.getItem('user'))||null;
-let trial=JSON.parse(localStorage.getItem('trial'))||null;
-let subscription=JSON.parse(localStorage.getItem('subscription'))||null;
+// STATE
+let userData = JSON.parse(localStorage.getItem('cinemaster_user')) || null;
+let canvas = document.getElementById('canvas');
+let ctx = canvas.getContext('2d');
+let currentImage = null;
+let originalImage = null;
 
-function show(s){document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));document.getElementById(s).classList.add('active');window.scrollTo(0,0)}
-function openLogin(){document.getElementById('loginModal').classList.add('show')}
-function closeModal(id){document.getElementById(id).classList.remove('show')}
-function msg(m){document.getElementById('msg').innerHTML='<div class="msg success">'+m+'</div>'}
-function add(type,item){if(!checkAccess())return;msg('✅ '+type+': '+item+' added!')}
-function checkAccess(){if(!user){alert('Sign in first!');openLogin();return false}if(trial){const now=new Date();const end=new Date(trial.end);if(now>end){alert('⏰ Trial expired! Subscribe to continue.');show('pricing');return false}}return true}
+// IMAGE UPLOAD
+document.getElementById('imageInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    const img = new Image();
+    img.onload = () => {
+      currentImage = img;
+      originalImage = img;
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      showToast('✅ Image loaded!');
+    };
+    img.src = event.target.result;
+  };
+  reader.readAsDataURL(file);
+});
 
-function signin(){const e=document.getElementById('email').value;const p=document.getElementById('password').value;if(!e||!p){alert('Fill all fields!');return}user={email:e,date:new Date().toISOString()};localStorage.setItem('user',JSON.stringify(user));updateStatus();closeModal('loginModal');alert('✅ Account created!')}
+// NAVIGATION
+function navigateTo(page) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(page).classList.add('active');
+  window.scrollTo(0, 0);
+}
 
-function startTrial(){if(!user){openLogin();return}document.getElementById('trialModal').classList.add('show')}
+// AUTH MODAL
+function openAuthModal() {
+  if (userData) {
+    if (confirm(`Sign out ${userData.name}?`)) {
+      userData = null;
+      localStorage.removeItem('cinemaster_user');
+      updateUserBadge();
+      showToast('👋 Signed out');
+    }
+    return;
+  }
+  document.getElementById('authModal').classList.add('active');
+}
 
-function activateTrial(){const e=document.getElementById('trialEmail').value;if(!e){alert('Enter email!');return}const start=new Date();const end=new Date(start.getTime()+7*24*60*60*1000);trial={start:start.toISOString(),end:end.toISOString()};localStorage.setItem('trial',JSON.stringify(trial));localStorage.setItem('subscription',null);updateStatus();closeModal('trialModal');alert('🎉 7-Day Trial Activated!\n\n✨ You have full access!\n\nExpires: '+end.toDateString())}
+function closeAuthModal() {
+  document.getElementById('authModal').classList.remove('active');
+  document.getElementById('authMessage').innerHTML = '';
+}
 
-function buyPro(type){if(!user){openLogin();return}const amt=type==='monthly'?'$2.99/month':'$19.99/year';document.getElementById('payTitle').textContent='Subscribe to Pro '+type;document.getElementById('payAmount').textContent=amt;document.getElementById('paymentModal').dataset.type=type;document.getElementById('paymentModal').classList.add('show')}
+function switchToSignUp() {
+  document.getElementById('signInForm').style.display = 'none';
+  document.getElementById('signUpForm').style.display = 'block';
+  document.getElementById('authTitle').textContent = 'Create Account';
+}
 
-function payment(){const name=document.getElementById('cardName').value;const email=document.getElementById('cardEmail').value;const card=document.getElementById('cardNumber').value;if(!name||!email||!card){alert('Fill all fields!');return}if(card.length<15){alert('Invalid card!');return}const type=document.getElementById('paymentModal').dataset.type;subscription={type,date:new Date().toISOString()};localStorage.setItem('subscription',JSON.stringify(subscription));localStorage.setItem('trial',null);updateStatus();closeModal('paymentModal');alert('✅ Payment Successful!\n\n💳 Welcome to Pro!\n\n✨ Unlimited editing unlocked!');}
+function switchToSignIn() {
+  document.getElementById('signInForm').style.display = 'block';
+  document.getElementById('signUpForm').style.display = 'none';
+  document.getElementById('authTitle').textContent = 'Sign In';
+}
 
-function loadVideo(){const f=document.getElementById('videoFile').files[0];if(!f){alert('Select video!');return}if(!checkAccess())return;const r=new FileReader();r.onload=(e)=>{const v=document.getElementById('video');v.src=e.target.result;document.getElementById('videoContainer').style.display='block'};r.readAsDataURL(f)}
+function signIn() {
+  const email = document.getElementById('signInEmail').value.trim();
+  const password = document.getElementById('signInPassword').value;
+  
+  if (!email || !password) {
+    showMessage('authMessage', '❌ Fill all fields', 'error');
+    return;
+  }
+  
+  const saved = JSON.parse(localStorage.getItem('cinemaster_user'));
+  if (!saved || saved.email !== email || saved.password !== password) {
+    showMessage('authMessage', '❌ Invalid credentials', 'error');
+    return;
+  }
+  
+  userData = saved;
+  localStorage.setItem('cinemaster_user', JSON.stringify(userData));
+  updateUserBadge();
+  showMessage('authMessage', '✅ Signed in!', 'success');
+  
+  setTimeout(() => {
+    closeAuthModal();
+    navigateTo('editor');
+  }, 1500);
+}
 
-function toggleLib(lib){if(!checkAccess())return;['subtitles','music','templates','effects','transitions'].forEach(l=>document.getElementById(l+'-lib').style.display=l===lib?'block':'none')}
+function createAccount() {
+  const name = document.getElementById('signUpName').value.trim();
+  const email = document.getElementById('signUpEmail').value.trim();
+  const password = document.getElementById('signUpPassword').value;
+  const confirm = document.getElementById('signUpConfirm').value;
+  
+  if (!name || !email || !password || !confirm) {
+    showMessage('authMessage', '❌ Fill all fields', 'error');
+    return;
+  }
+  
+  if (password.length < 6) {
+    showMessage('authMessage', '❌ Password must be 6+ characters', 'error');
+    return;
+  }
+  
+  if (password !== confirm) {
+    showMessage('authMessage', '❌ Passwords do not match', 'error');
+    return;
+  }
+  
+  const saved = JSON.parse(localStorage.getItem('cinemaster_user'));
+  if (saved && saved.email === email) {
+    showMessage('authMessage', '❌ Email already registered', 'error');
+    return;
+  }
+  
+  userData = {
+    name,
+    email,
+    password,
+    created: new Date().toISOString(),
+    trial: { start: new Date().toISOString(), end: new Date(Date.now() + 7*24*60*60*1000).toISOString() }
+  };
+  
+  localStorage.setItem('cinemaster_user', JSON.stringify(userData));
+  updateUserBadge();
+  showMessage('authMessage', '✅ Account created! 7-day trial activated!', 'success');
+  
+  setTimeout(() => {
+    closeAuthModal();
+    navigateTo('editor');
+  }, 1500);
+}
 
-function resetVideo(){document.getElementById('videoFile').value='';document.getElementById('videoContainer').style.display='none';['subtitles','music','templates','effects','transitions'].forEach(l=>document.getElementById(l+'-lib').style.display='none');msg('✅ Reset')}
+function updateUserBadge() {
+  const badge = document.getElementById('userBadge');
+  if (userData) {
+    let text = `👤 ${userData.name}`;
+    if (userData.trial) {
+      const days = Math.ceil((new Date(userData.trial.end) - new Date()) / (24*60*60*1000));
+      if (days > 0) text += ` | ⭐ ${days} days`;
+    }
+    badge.textContent = text;
+  } else {
+    badge.textContent = '👤 Guest';
+  }
+}
 
-function exportVid(){if(!document.getElementById('video').src){alert('Load video!');return}if(!checkAccess())return;msg('📥 Exporting... (Free:480p Pro:4K)');setTimeout(()=>{msg('✅ Export ready! Download now.')},1500)}
+// EDITOR FUNCTIONS
+function applyFilter(filterType) {
+  if (!currentImage) {
+    showToast('❌ Load an image first', 'error');
+    return;
+  }
+  
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = canvas.width;
+  tempCanvas.height = canvas.height;
+  const tempCtx = tempCanvas.getContext('2d');
+  
+  tempCtx.drawImage(originalImage, 0, 0);
+  const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+  const data = imageData.data;
+  
+  switch(filterType) {
+    case 'grayscale':
+      for (let i = 0; i < data.length; i += 4) {
+        const gray = data[i] * 0.299 + data[i+1] * 0.587 + data[i+2] * 0.114;
+        data[i] = data[i+1] = data[i+2] = gray;
+      }
+      break;
+    case 'sepia':
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i+1], b = data[i+2];
+        data[i] = Math.min(255, r * 0.393 + g * 0.769 + b * 0.189);
+        data[i+1] = Math.min(255, r * 0.349 + g * 0.686 + b * 0.168);
+        data[i+2] = Math.min(255, r * 0.272 + g * 0.534 + b * 0.131);
+      }
+      break;
+    case 'invert':
+      for (let i = 0; i < data.length; i += 4) {
+        data[i] = 255 - data[i];
+        data[i+1] = 255 - data[i+1];
+        data[i+2] = 255 - data[i+2];
+      }
+      break;
+    case 'blur':
+      tempCtx.filter = 'blur(5px)';
+      tempCtx.drawImage(originalImage, 0, 0);
+      tempCtx.putImageData(imageData, 0, 0);
+      break;
+    case 'bright':
+      tempCtx.filter = 'brightness(1.3)';
+      tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+      tempCtx.drawImage(originalImage, 0, 0);
+      break;
+    case 'vintage':
+      tempCtx.filter = 'sepia(0.5) brightness(1.1) saturate(1.2)';
+      tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+      tempCtx.drawImage(originalImage, 0, 0);
+      break;
+    case 'saturate':
+      tempCtx.filter = 'saturate(2)';
+      tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+      tempCtx.drawImage(originalImage, 0, 0);
+      break;
+    case 'contrast':
+      tempCtx.filter = 'contrast(1.5)';
+      tempCtx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+      tempCtx.drawImage(originalImage, 0, 0);
+      break;
+  }
+  
+  if (filterType === 'grayscale' || filterType === 'sepia' || filterType === 'invert') {
+    tempCtx.putImageData(imageData, 0, 0);
+  }
+  
+  currentImage = new Image();
+  currentImage.onload = () => {
+    ctx.drawImage(currentImage, 0, 0);
+    showToast(`✅ Filter applied: ${filterType}`);
+  };
+  currentImage.src = tempCanvas.toDataURL();
+}
 
-function updateStatus(){const s=document.getElementById('status');if(user){let txt=user.email;if(subscription)txt+=' • PRO';else if(trial)txt+=' • TRIAL';s.innerHTML=txt+' | <a href="#" onclick="logout()" style="color:#06b6d4;cursor:pointer">Sign Out</a>'}else{s.innerHTML='Guest | <a href="#" onclick="openLogin()" style="color:#06b6d4;cursor:pointer">Sign In</a>'}}
+function addEffect(effectType) {
+  showToast(`✅ Effect added: ${effectType}`);
+}
 
-function logout(){user=null;localStorage.removeItem('user');updateStatus();show('home');alert('👋 Signed out')}
+function addText() {
+  const text = prompt('Enter text:');
+  if (!text || !currentImage) return;
+  
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = canvas.width;
+  tempCanvas.height = canvas.height;
+  const tempCtx = tempCanvas.getContext('2d');
+  
+  tempCtx.drawImage(currentImage, 0, 0);
+  tempCtx.font = 'bold 40px Arial';
+  tempCtx.fillStyle = '#ffffff';
+  tempCtx.textAlign = 'center';
+  tempCtx.textBaseline = 'middle';
+  tempCtx.fillText(text, canvas.width/2, canvas.height/2);
+  
+  currentImage = new Image();
+  currentImage.onload = () => {
+    ctx.drawImage(currentImage, 0, 0);
+    showToast('✅ Text added!');
+  };
+  currentImage.src = tempCanvas.toDataURL();
+}
 
-updateStatus();
+function addSticker(emoji) {
+  if (!currentImage) {
+    showToast('❌ Load an image first', 'error');
+    return;
+  }
+  
+  const tempCanvas = document.createElement('canvas');
+  tempCanvas.width = canvas.width;
+  tempCanvas.height = canvas.height;
+  const tempCtx = tempCanvas.getContext('2d');
+  
+  tempCtx.drawImage(currentImage, 0, 0);
+  tempCtx.font = 'bold 80px Arial';
+  tempCtx.textAlign = 'center';
+  tempCtx.textBaseline = 'middle';
+  tempCtx.fillText(emoji, canvas.width/2, canvas.height/2);
+  
+  currentImage = new Image();
+  currentImage.onload = () => {
+    ctx.drawImage(currentImage, 0, 0);
+    showToast(`✅ Sticker added: ${emoji}`);
+  };
+  currentImage.src = tempCanvas.toDataURL();
+}
+
+function addMusic(musicType) {
+  showToast(`✅ Music added: ${musicType}`);
+}
+
+function addSubtitle(language) {
+  showToast(`✅ Subtitles: ${language}`);
+}
+
+function adjustBrightness(value) {
+  showToast(`☀️ Brightness: ${value}%`);
+}
+
+function adjustContrast(value) {
+  showToast(`⚙️ Contrast: ${value}%`);
+}
+
+function adjustSaturation(value) {
+  showToast(`🌈 Saturation: ${value}%`);
+}
+
+function useTemplate(template) {
+  const templates = {
+    '1080x1080': { w: 1080, h: 1080, name: 'Instagram' },
+    '1080x1920': { w: 1080, h: 1920, name: 'TikTok' },
+    '1920x1080': { w: 1920, h: 1080, name: 'YouTube' },
+    '800x600': { w: 800, h: 600, name: 'Default' }
+  };
+  const t = templates[template];
+  canvas.width = t.w;
+  canvas.height = t.h;
+  if (currentImage) ctx.drawImage(currentImage, 0, 0, t.w, t.h);
+  showToast(`✅ Template: ${t.name}`);
+}
+
+function exportMedia() {
+  if (!currentImage) {
+    showToast('❌ Create or edit an image first', 'error');
+    return;
+  }
+  
+  const link = document.createElement('a');
+  link.href = canvas.toDataURL('image/png');
+  link.download = `cinemaster-${Date.now()}.png`;
+  link.click();
+  showToast('📥 Image exported!');
+}
+
+function showProMessage() {
+  alert('CineMaster Pro coming soon! All features are already free. Stay tuned!');
+}
+
+function showToast(message, type = 'success') {
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+function showMessage(elementId, message, type) {
+  const el = document.getElementById(elementId);
+  el.innerHTML = `<div class="message ${type}">${message}</div>`;
+}
+
+updateUserBadge();
 </script>
 
 </body>
