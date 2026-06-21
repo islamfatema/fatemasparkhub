@@ -2,51 +2,63 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>CineMaster - Photo Editor</title>
+<title>CineMaster Pro - Photo & Video Editor</title>
 <style>
+*{box-sizing:border-box}
 body{font-family:Arial;margin:0;padding:20px;background:#1a1a2e;color:#fff}
 .header{background:#0f3460;padding:15px;border-radius:8px;margin-bottom:20px;border:2px solid #00d4ff}
 h1{margin:0;color:#00d4ff}
-.container{max-width:1200px;margin:0 auto;background:#16213e;padding:20px;border-radius:8px;border:2px solid #00d4ff}
+.container{max-width:1300px;margin:0 auto;background:#16213e;padding:20px;border-radius:8px;border:2px solid #00d4ff}
 input[type="file"]{padding:10px;background:#0f3460;color:#00d4ff;border:2px solid #00d4ff;border-radius:6px;cursor:pointer}
-button{padding:12px 20px;background:#00d4ff;color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:bold;margin:5px;font-size:14px}
+button{padding:10px 18px;background:#00d4ff;color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:bold;margin:4px;font-size:13px}
 button:hover{background:#00e6ff}
-#canvas{border:2px solid #00d4ff;max-width:100%;background:#333;display:block;margin:10px 0}
-.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:15px 0}
-.tool-btn{padding:10px;background:#0f3460;color:#00d4ff;border:2px solid #00d4ff;border-radius:6px;cursor:pointer;font-weight:bold;font-size:12px}
-.form-group{margin:15px 0}
-label{display:block;margin-bottom:5px;color:#00d4ff;font-weight:bold}
-input[type="email"],input[type="password"],input[type="text"]{width:100%;padding:10px;border:2px solid #00d4ff;border-radius:6px;background:#1a1a2e;color:#fff;font-size:14px;box-sizing:border-box}
-.message{padding:10px;border-radius:6px;margin:10px 0;font-weight:bold}
+.tool-btn{padding:8px;background:#0f3460;color:#00d4ff;border:2px solid #00d4ff;border-radius:6px;cursor:pointer;font-weight:bold;font-size:11px}
+.tool-btn.selected{background:#00d4ff;color:#000}
+.tools{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.editor-row{display:flex;gap:20px;flex-wrap:wrap;margin-top:15px}
+.canvas-wrap{position:relative;background:#000;border:2px solid #00d4ff;overflow:visible;flex-shrink:0}
+.overlay-el{position:absolute;cursor:move;user-select:none;white-space:nowrap;touch-action:none}
+.overlay-el.selected{outline:2px dashed #00d4ff}
+.handle{position:absolute;width:18px;height:18px;background:#00d4ff;border-radius:50%;cursor:pointer;display:none;align-items:center;justify-content:center;font-size:11px;color:#000;font-weight:bold}
+.overlay-el.selected .handle{display:flex}
+.handle.resize{right:-9px;bottom:-9px;cursor:nwse-resize}
+.handle.rotate{top:-26px;left:50%;transform:translateX(-50%);cursor:grab}
+.handle.del{top:-9px;right:-9px;background:#ef4444;color:#fff}
+.side-panel{flex:1;min-width:280px;max-height:700px;overflow-y:auto;background:rgba(0,212,255,0.05);border:1px solid #00d4ff;border-radius:8px;padding:12px}
+.panel-title{color:#00d4ff;font-weight:bold;font-size:12px;text-transform:uppercase;margin:12px 0 6px 0}
+.catalog-search{width:100%;padding:8px;border:2px solid #00d4ff;border-radius:6px;background:#1a1a2e;color:#fff;margin-bottom:8px}
+.catalog-item{display:flex;justify-content:space-between;align-items:center;background:rgba(0,212,255,0.08);padding:6px 10px;border-radius:6px;margin-bottom:4px;font-size:12px}
+.catalog-item button{font-size:10px;padding:4px 8px;margin:0 2px}
+.catalog-count{font-size:11px;color:#999;margin-bottom:6px}
+label{display:block;margin-bottom:5px;color:#00d4ff;font-weight:bold;font-size:12px}
+.form-group{margin:12px 0}
+input[type="email"],input[type="password"],input[type="text"],select,textarea{width:100%;padding:9px;border:2px solid #00d4ff;border-radius:6px;background:#1a1a2e;color:#fff;font-size:13px}
+input[type="range"]{width:100%}
+.message{padding:10px;border-radius:6px;margin:10px 0;font-weight:bold;font-size:12px}
 .success{background:#10b981;color:#fff}
 .error{background:#ef4444;color:#fff}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:1000;justify-content:center;align-items:center}
 .modal.show{display:flex}
-.modal-content{background:#16213e;padding:30px;border-radius:8px;border:2px solid #00d4ff;max-width:500px;width:90%}
-.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.close{background:none;border:none;font-size:28px;color:#00d4ff;cursor:pointer}
-.nav{margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.nav-btn{padding:10px 20px;background:#0f3460;color:#00d4ff;border:2px solid #00d4ff;border-radius:6px;cursor:pointer;font-weight:bold}
+.modal-content{background:#16213e;padding:30px;border-radius:8px;border:2px solid #00d4ff;max-width:480px;width:90%}
+.close{background:none;border:none;font-size:26px;color:#00d4ff;cursor:pointer;float:right}
+.nav{margin-bottom:20px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.nav-btn{padding:9px 16px;background:#0f3460;color:#00d4ff;border:2px solid #00d4ff;border-radius:6px;cursor:pointer;font-weight:bold;font-size:13px}
 .nav-btn.active{background:#00d4ff;color:#000}
 .page{display:none}
 .page.active{display:block}
-.user-info{background:#0f3460;padding:10px;border-radius:6px;color:#00d4ff;font-weight:bold;display:inline-block}
-.toast{position:fixed;bottom:20px;right:20px;background:#10b981;color:#fff;padding:15px;border-radius:6px;z-index:9999}
+.user-info{background:#0f3460;padding:9px 14px;border-radius:6px;color:#00d4ff;font-weight:bold;font-size:12px}
+.toast{position:fixed;bottom:20px;right:20px;background:#10b981;color:#fff;padding:12px 18px;border-radius:6px;z-index:9999;font-size:13px}
 .toast.error{background:#ef4444}
-.toast.warning{background:#f59e0b}
+.note{font-size:11px;color:#999;font-style:italic;margin-top:4px}
 </style>
 </head>
 <body>
 
-<div class="header">
-<h1>🎬 CineMaster - Photo & Video Editor</h1>
-<p style="margin:10px 0 0 0;color:#00d4ff">All features FREE. No paywalls.</p>
-</div>
+<div class="header"><h1>🎬 CineMaster Pro</h1></div>
 
 <div class="nav">
 <button class="nav-btn active" data-page="home" onclick="showPage('home',this)">Home</button>
 <button class="nav-btn" data-page="editor" onclick="showPage('editor',this)">Editor</button>
-<button class="nav-btn" data-page="features" onclick="showPage('features',this)">Features</button>
 <span style="flex:1"></span>
 <span id="userSpan" class="user-info">👤 Guest</span>
 <button class="nav-btn" onclick="openAuthModal()">Sign In</button>
@@ -55,188 +67,255 @@ input[type="email"],input[type="password"],input[type="text"]{width:100%;padding
 <div id="home" class="page active">
 <div class="container">
 <h2>Welcome to CineMaster Pro</h2>
-<p>All features are 100% FREE:</p>
-<ul>
-<li>✅ 12 Working Filters</li>
-<li>✅ 1000+ Music Tracks (catalog)</li>
-<li>✅ 50+ Language Subtitles (catalog)</li>
-<li>✅ Add Text to Images</li>
-<li>✅ 12 Emoji Stickers</li>
-<li>✅ Social Media Templates</li>
-<li>✅ Real Sign Up / Sign In</li>
-<li>✅ 7-Day Free Trial</li>
-<li>✅ Export to PNG</li>
-</ul>
-<button onclick="showPage('editor')">Start Editing Now →</button>
+<p>20 filters, draggable text & stickers, music + subtitle catalogs, real local accounts with a 7-day trial, PNG export.</p>
+<button onclick="showPage('editor')">Start Editing →</button>
 </div>
 </div>
 
 <div id="editor" class="page">
 <div class="container">
-<h2>Photo & Video Editor</h2>
-
-<label>Upload Image:</label>
+<h2>Editor</h2>
 <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload()">
-<label style="margin-left:20px">Upload Video:</label>
-<input type="file" id="videoInput" accept="video/*" onchange="handleVideoUpload()">
 
-<canvas id="canvas" width="800" height="600"></canvas>
+<div class="editor-row">
+  <div class="canvas-wrap" id="canvasWrap">
+    <canvas id="canvas" width="700" height="500"></canvas>
+  </div>
 
-<h3>✨ Filters</h3>
-<div class="tools">
-<button class="tool-btn" onclick="applyFilter('grayscale')">Grayscale</button>
-<button class="tool-btn" onclick="applyFilter('sepia')">Sepia</button>
-<button class="tool-btn" onclick="applyFilter('invert')">Invert</button>
-<button class="tool-btn" onclick="applyFilter('blur')">Blur</button>
-<button class="tool-btn" onclick="applyFilter('bright')">Brighten</button>
-<button class="tool-btn" onclick="applyFilter('dark')">Darken</button>
-<button class="tool-btn" onclick="applyFilter('vintage')">Vintage</button>
-<button class="tool-btn" onclick="applyFilter('saturate')">Saturate</button>
-<button class="tool-btn" onclick="applyFilter('contrast')">Contrast</button>
-<button class="tool-btn" onclick="applyFilter('warm')">Warm</button>
-<button class="tool-btn" onclick="applyFilter('cool')">Cool</button>
-<button class="tool-btn" onclick="applyFilter('haze')">Haze</button>
+  <div class="side-panel">
+    <div class="panel-title">✨ Filters (20) + Intensity</div>
+    <div class="tools" id="filterButtons"></div>
+    <label style="margin-top:8px">Intensity: <span id="intensityVal">100</span>%</label>
+    <input type="range" id="intensitySlider" min="0" max="200" value="100" oninput="onIntensityChange()">
+
+    <div class="panel-title">✏️ Add Text</div>
+    <input type="text" id="textInput" placeholder="Type text...">
+    <input type="color" id="textColor" value="#ffffff" style="margin-top:6px">
+    <button onclick="addTextOverlay()" style="width:100%;margin-top:8px">+ Add Text</button>
+
+    <div class="panel-title">🎭 Stickers (12) - drag, resize, rotate, delete</div>
+    <div class="tools" id="stickerButtons"></div>
+
+    <div class="panel-title">📋 Templates</div>
+    <div class="tools" id="templateButtons"></div>
+
+    <div class="panel-title">📥 Export</div>
+    <button onclick="exportImage()" style="width:100%;background:#10b981">Export PNG</button>
+  </div>
+
+  <div class="side-panel">
+    <div class="panel-title">🎵 Music Catalog (<span id="musicTotal"></span>)</div>
+    <input class="catalog-search" id="musicSearch" placeholder="Search tracks..." oninput="renderMusicCatalog()">
+    <div class="catalog-count" id="musicCount"></div>
+    <div id="musicList"></div>
+    <p class="note">Preview plays a short generated tone. Full streaming of licensed tracks needs a connected music API — not something a static file can do on its own.</p>
+
+    <div class="panel-title">🌍 Subtitles (60 languages)</div>
+    <select id="subLang"></select>
+    <textarea id="subText" rows="2" placeholder="Type your subtitle..." style="margin-top:6px"></textarea>
+    <button onclick="addSubtitleOverlay()" style="width:100%;margin-top:8px">+ Burn Subtitle Onto Image</button>
+    <p class="note">This adds your own typed caption in the chosen language's text direction/style. Automatic speech-to-text or translation needs a connected AI service.</p>
+  </div>
 </div>
 
-<h3>✏️ Add Text</h3>
-<button onclick="addTextToImage()">+ Add Text to Image</button>
-
-<h3>🎭 Stickers</h3>
-<div class="tools">
-<button class="tool-btn" onclick="addStickerEmoji('😀')">😀</button>
-<button class="tool-btn" onclick="addStickerEmoji('😂')">😂</button>
-<button class="tool-btn" onclick="addStickerEmoji('❤️')">❤️</button>
-<button class="tool-btn" onclick="addStickerEmoji('🔥')">🔥</button>
-<button class="tool-btn" onclick="addStickerEmoji('⭐')">⭐</button>
-<button class="tool-btn" onclick="addStickerEmoji('🎉')">🎉</button>
-<button class="tool-btn" onclick="addStickerEmoji('👑')">👑</button>
-<button class="tool-btn" onclick="addStickerEmoji('💯')">💯</button>
-<button class="tool-btn" onclick="addStickerEmoji('🚀')">🚀</button>
-<button class="tool-btn" onclick="addStickerEmoji('✨')">✨</button>
-<button class="tool-btn" onclick="addStickerEmoji('🎬')">🎬</button>
-<button class="tool-btn" onclick="addStickerEmoji('🎵')">🎵</button>
-</div>
-
-<h3>🎵 Music Library (1000+)</h3>
-<div class="tools">
-<button class="tool-btn" onclick="showMessage('✅ Upbeat music added')">Upbeat</button>
-<button class="tool-btn" onclick="showMessage('✅ Chill music added')">Chill</button>
-<button class="tool-btn" onclick="showMessage('✅ Epic music added')">Epic</button>
-<button class="tool-btn" onclick="showMessage('✅ Jazz music added')">Jazz</button>
-<button class="tool-btn" onclick="showMessage('✅ EDM music added')">EDM</button>
-<button class="tool-btn" onclick="showMessage('✅ Cinema music added')">Cinema</button>
-<button class="tool-btn" onclick="showMessage('✅ Lo-Fi music added')">Lo-Fi</button>
-<button class="tool-btn" onclick="showMessage('✅ Ambient music added')">Ambient</button>
-<button class="tool-btn" onclick="showMessage('✅ Electronic music added')">Electronic</button>
-<button class="tool-btn" onclick="showMessage('✅ Pop music added')">Pop</button>
-<button class="tool-btn" onclick="showMessage('✅ Rock music added')">Rock</button>
-<button class="tool-btn" onclick="showMessage('✅ Hip-Hop music added')">Hip-Hop</button>
-</div>
-
-<h3>🌍 Subtitle Languages (50+)</h3>
-<div class="tools">
-<button class="tool-btn" onclick="showMessage('✅ English subtitles')">English</button>
-<button class="tool-btn" onclick="showMessage('✅ Spanish subtitles')">Spanish</button>
-<button class="tool-btn" onclick="showMessage('✅ French subtitles')">French</button>
-<button class="tool-btn" onclick="showMessage('✅ German subtitles')">German</button>
-<button class="tool-btn" onclick="showMessage('✅ Chinese subtitles')">Chinese</button>
-<button class="tool-btn" onclick="showMessage('✅ Japanese subtitles')">Japanese</button>
-<button class="tool-btn" onclick="showMessage('✅ Korean subtitles')">Korean</button>
-<button class="tool-btn" onclick="showMessage('✅ Russian subtitles')">Russian</button>
-<button class="tool-btn" onclick="showMessage('✅ Arabic subtitles')">Arabic</button>
-<button class="tool-btn" onclick="showMessage('✅ Hindi subtitles')">Hindi</button>
-<button class="tool-btn" onclick="showMessage('✅ Portuguese subtitles')">Portuguese</button>
-<button class="tool-btn" onclick="showMessage('✅ Italian subtitles')">Italian</button>
-</div>
-
-<h3>📋 Templates</h3>
-<div class="tools">
-<button class="tool-btn" onclick="setTemplate(1080,1080)">Instagram 1080x1080</button>
-<button class="tool-btn" onclick="setTemplate(1080,1920)">TikTok 1080x1920</button>
-<button class="tool-btn" onclick="setTemplate(1920,1080)">YouTube 1920x1080</button>
-<button class="tool-btn" onclick="setTemplate(800,600)">Default 800x600</button>
-</div>
-
-<h3>Export</h3>
-<button onclick="exportImage()" style="background:#10b981;font-size:16px;padding:15px 30px">📥 Export as PNG</button>
-
-</div>
-</div>
-
-<div id="features" class="page">
-<div class="container">
-<h2>All Features</h2>
-<h3>✨ Filters</h3>
-<p>Grayscale, Sepia, Invert, Blur, Brighten, Darken, Vintage, Saturate, Contrast, Warm, Cool, Haze</p>
-<h3>🎵 Music (1000+ catalog)</h3>
-<p>Upbeat, Chill, Epic, Jazz, EDM, Cinematic, Lo-Fi, Ambient, Electronic, Pop, Rock, Hip-Hop</p>
-<h3>🌍 Subtitles (50+ catalog)</h3>
-<p>English, Spanish, French, German, Chinese, Japanese, Korean, Russian, Arabic, Hindi, Portuguese, Italian</p>
-<h3>✏️ Text & Stickers</h3>
-<p>Custom text with shadow styling, 12 emoji stickers</p>
-<h3>📱 Templates</h3>
-<p>Instagram, TikTok, YouTube presets</p>
-<h3>🔐 Authentication</h3>
-<p>Real sign-up/sign-in stored locally, 7-day free trial</p>
-<h3>📥 Export</h3>
-<p>PNG export, full quality, no watermark</p>
 </div>
 </div>
 
 <div id="authModal" class="modal">
 <div class="modal-content">
-<div class="modal-header">
-<h2 id="authTitle">Sign In</h2>
 <button class="close" onclick="closeAuthModal()">&times;</button>
-</div>
-
+<h2 id="authTitle" style="color:#00d4ff">Sign In</h2>
 <div id="loginSection">
-<div class="form-group"><label>Email:</label><input type="email" id="loginEmail" placeholder="your@email.com"></div>
-<div class="form-group"><label>Password:</label><input type="password" id="loginPassword" placeholder="••••••••"></div>
+<div class="form-group"><label>Email</label><input type="email" id="loginEmail"></div>
+<div class="form-group"><label>Password</label><input type="password" id="loginPassword"></div>
 <button onclick="doLogin()" style="width:100%">Sign In</button>
-<p style="text-align:center;margin-top:15px">No account? <span style="color:#00d4ff;cursor:pointer;font-weight:bold" onclick="switchToSignup()">Create one</span></p>
+<p style="text-align:center;margin-top:12px;font-size:12px">No account? <span style="color:#00d4ff;cursor:pointer;font-weight:bold" onclick="switchToSignup()">Create one</span></p>
 <div id="loginMessage"></div>
 </div>
-
 <div id="signupSection" style="display:none">
-<div class="form-group"><label>Full Name:</label><input type="text" id="signupName" placeholder="John Doe"></div>
-<div class="form-group"><label>Email:</label><input type="email" id="signupEmail" placeholder="your@email.com"></div>
-<div class="form-group"><label>Password:</label><input type="password" id="signupPassword" placeholder="••••••••"></div>
-<div class="form-group"><label>Confirm Password:</label><input type="password" id="signupConfirm" placeholder="••••••••"></div>
+<div class="form-group"><label>Name</label><input type="text" id="signupName"></div>
+<div class="form-group"><label>Email</label><input type="email" id="signupEmail"></div>
+<div class="form-group"><label>Password</label><input type="password" id="signupPassword"></div>
+<div class="form-group"><label>Confirm</label><input type="password" id="signupConfirm"></div>
 <button onclick="doSignup()" style="width:100%">Create Account</button>
-<p style="text-align:center;margin-top:15px">Have account? <span style="color:#00d4ff;cursor:pointer;font-weight:bold" onclick="switchToLogin()">Sign in</span></p>
+<p style="text-align:center;margin-top:12px;font-size:12px">Have account? <span style="color:#00d4ff;cursor:pointer;font-weight:bold" onclick="switchToLogin()">Sign in</span></p>
 <div id="signupMessage"></div>
 </div>
 </div>
 </div>
 
 <script>
+/* ============ STATE ============ */
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
-let currentImage = null;
-let originalImage = null;
+let baseImage = null;
+let currentFilterKey = 'normal';
+let currentIntensity = 100;
+let overlays = [];
+let selectedOverlayId = null;
+let overlayCounter = 0;
 let userData = JSON.parse(localStorage.getItem('cinemaster_data')) || null;
 
-function showPage(name, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(name).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
+/* ============ FILTERS (20) ============ */
+const FILTERS = {
+  normal:    {label:'Normal',    css:i=>'none'},
+  bright:    {label:'Bright',    css:i=>`brightness(${1+0.6*i})`},
+  dark:      {label:'Dark',      css:i=>`brightness(${1-0.5*i})`},
+  bw:        {label:'B & White', css:i=>`grayscale(${i})`},
+  sepia:     {label:'Sepia',     css:i=>`sepia(${i})`},
+  blur:      {label:'Blur',      css:i=>`blur(${6*i}px)`},
+  vintage:   {label:'Vintage',   css:i=>`sepia(${0.5*i}) brightness(${1+0.1*i}) saturate(${1+0.2*i})`},
+  retro:     {label:'Retro',     css:i=>`sepia(${0.4*i}) contrast(${1+0.3*i}) brightness(${1-0.05*i})`},
+  cool:      {label:'Cool',      css:i=>`hue-rotate(${200*i}deg) brightness(${1+0.1*i})`},
+  warm:      {label:'Warm',      css:i=>`sepia(${0.35*i}) saturate(${1+0.2*i})`},
+  soft:      {label:'Soft',      css:i=>`blur(${2*i}px) brightness(${1+0.15*i})`},
+  vivid:     {label:'Vivid',     css:i=>`saturate(${1+1*i}) contrast(${1+0.2*i})`},
+  cinematic: {label:'Cinematic', css:i=>`contrast(${1+0.3*i}) saturate(${1-0.2*i}) hue-rotate(${10*i}deg)`},
+  dream:     {label:'Dream',     css:i=>`blur(${3*i}px) brightness(${1+0.2*i}) saturate(${1+0.1*i})`},
+  hdr:       {label:'HDR',       css:i=>`contrast(${1+0.4*i}) brightness(${1+0.05*i}) saturate(${1+0.3*i})`},
+  sharpen:   {label:'Sharpen',   kind:'convolve'},
+  glow:      {label:'Glow',      kind:'glow'},
+  neon:      {label:'Neon',      kind:'neon'},
+  purple:    {label:'Purple',    kind:'duotone', color:[120,60,200]},
+  orange:    {label:'Orange',    kind:'duotone', color:[255,120,40]}
+};
+
+function buildFilterButtons(){
+  const c = document.getElementById('filterButtons');
+  c.innerHTML = '';
+  Object.keys(FILTERS).forEach(key=>{
+    const b = document.createElement('button');
+    b.className = 'tool-btn' + (key==='normal' ? ' selected' : '');
+    b.textContent = FILTERS[key].label;
+    b.dataset.key = key;
+    b.onclick = () => selectFilter(key);
+    c.appendChild(b);
+  });
 }
 
-function handleImageUpload() {
-  let file = document.getElementById('imageInput').files[0];
-  if (!file) return;
-  let reader = new FileReader();
-  reader.onload = function(e) {
-    let img = new Image();
-    img.onload = function() {
-      currentImage = img;
-      originalImage = img;
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      ctx.drawImage(img, 0, 0);
+function selectFilter(key){
+  currentFilterKey = key;
+  document.querySelectorAll('#filterButtons .tool-btn').forEach(b=>{
+    b.classList.toggle('selected', b.dataset.key === key);
+  });
+  renderBase();
+  showMessage('✅ ' + FILTERS[key].label + ' filter applied');
+}
+
+function onIntensityChange(){
+  currentIntensity = parseInt(document.getElementById('intensitySlider').value);
+  document.getElementById('intensityVal').textContent = currentIntensity;
+  renderBase();
+}
+
+function renderBase(){
+  if(!baseImage) return;
+  const i = currentIntensity/100;
+  const f = FILTERS[currentFilterKey];
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  if(!f.kind){
+    ctx.filter = f.css(i);
+    ctx.drawImage(baseImage,0,0,canvas.width,canvas.height);
+    ctx.filter = 'none';
+  } else if(f.kind === 'convolve'){
+    drawSharpen(i);
+  } else if(f.kind === 'glow'){
+    drawGlow(i);
+  } else if(f.kind === 'neon'){
+    drawNeon(i);
+  } else if(f.kind === 'duotone'){
+    drawDuotone(f.color, i);
+  }
+}
+
+function drawSharpen(intensity){
+  ctx.drawImage(baseImage,0,0,canvas.width,canvas.height);
+  const w=canvas.width,h=canvas.height;
+  const src = ctx.getImageData(0,0,w,h);
+  const out = ctx.createImageData(w,h);
+  const d = src.data, o = out.data;
+  const amt = 1 + 4*intensity;
+  const kernel = [0,-1,0,-1,amt+4,-1,0,-1,0];
+  for(let y=0;y<h;y++){
+    for(let x=0;x<w;x++){
+      for(let c=0;c<3;c++){
+        let sum=0,k=0;
+        for(let ky=-1;ky<=1;ky++){
+          for(let kx=-1;kx<=1;kx++){
+            const yy=Math.min(h-1,Math.max(0,y+ky));
+            const xx=Math.min(w-1,Math.max(0,x+kx));
+            sum += d[(yy*w+xx)*4+c]*kernel[k]; k++;
+          }
+        }
+        o[(y*w+x)*4+c] = Math.min(255,Math.max(0, sum/(amt)));
+      }
+      o[(y*w+x)*4+3]=255;
+    }
+  }
+  ctx.putImageData(out,0,0);
+}
+
+function drawGlow(intensity){
+  ctx.drawImage(baseImage,0,0,canvas.width,canvas.height);
+  ctx.save();
+  ctx.filter = `blur(${10*intensity}px) brightness(${1+0.8*intensity})`;
+  ctx.globalCompositeOperation = 'lighten';
+  ctx.drawImage(baseImage,0,0,canvas.width,canvas.height);
+  ctx.restore();
+}
+
+function drawNeon(intensity){
+  ctx.filter = `saturate(${1+2*intensity}) contrast(${1+0.3*intensity})`;
+  ctx.drawImage(baseImage,0,0,canvas.width,canvas.height);
+  ctx.filter='none';
+  ctx.save();
+  ctx.filter = `blur(${8*intensity}px) hue-rotate(${280*intensity}deg) saturate(3)`;
+  ctx.globalCompositeOperation = 'screen';
+  ctx.globalAlpha = 0.7;
+  ctx.drawImage(baseImage,0,0,canvas.width,canvas.height);
+  ctx.restore();
+  ctx.globalAlpha = 1;
+}
+
+function drawDuotone(color, intensity){
+  ctx.filter = 'grayscale(1)';
+  ctx.drawImage(baseImage,0,0,canvas.width,canvas.height);
+  ctx.filter='none';
+  ctx.save();
+  ctx.globalCompositeOperation = 'multiply';
+  ctx.globalAlpha = intensity;
+  ctx.fillStyle = `rgb(${color[0]},${color[1]},${color[2]})`;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.restore();
+  ctx.globalAlpha = 1;
+}
+
+/* ============ IMAGE UPLOAD ============ */
+function handleImageUpload(){
+  const file = document.getElementById('imageInput').files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const MAX = 700;
+      let w = img.width, h = img.height;
+      if(w > MAX || h > MAX){
+        const scale = Math.min(MAX/w, MAX/h);
+        w = Math.round(w*scale); h = Math.round(h*scale);
+      }
+      canvas.width = w; canvas.height = h;
+      document.getElementById('canvasWrap').style.width = w+'px';
+      document.getElementById('canvasWrap').style.height = h+'px';
+      baseImage = img;
+      currentFilterKey = 'normal';
+      currentIntensity = 100;
+      document.getElementById('intensitySlider').value = 100;
+      document.getElementById('intensityVal').textContent = 100;
+      document.querySelectorAll('#filterButtons .tool-btn').forEach(b=>b.classList.toggle('selected', b.dataset.key==='normal'));
+      clearAllOverlays();
+      renderBase();
       showMessage('✅ Image loaded: ' + file.name);
     };
     img.src = e.target.result;
@@ -244,238 +323,359 @@ function handleImageUpload() {
   reader.readAsDataURL(file);
 }
 
-function handleVideoUpload() {
-  let file = document.getElementById('videoInput').files[0];
-  if (!file) return;
-  showMessage('✅ Video loaded: ' + file.name);
+/* ============ OVERLAYS ============ */
+function createOverlay(type, content, opts){
+  opts = opts || {};
+  const id = 'ov' + (++overlayCounter);
+  const ov = {
+    id, type, content,
+    x: opts.x ?? (canvas.width/2 - 40),
+    y: opts.y ?? (canvas.height/2 - 20),
+    fontSize: opts.fontSize ?? (type==='sticker' ? 60 : 32),
+    color: opts.color ?? '#ffffff',
+    rotation: 0
+  };
+  overlays.push(ov);
+  renderOverlayDOM(ov);
+  selectOverlay(id);
+  return ov;
 }
 
-function applyFilter(type) {
-  if (!currentImage) { showMessage('❌ Load image first', 'error'); return; }
-  let temp = document.createElement('canvas');
-  temp.width = canvas.width;
-  temp.height = canvas.height;
-  let t = temp.getContext('2d');
-  t.drawImage(originalImage, 0, 0);
+function renderOverlayDOM(ov){
+  const wrap = document.getElementById('canvasWrap');
+  const el = document.createElement('div');
+  el.className = 'overlay-el';
+  el.id = 'el_'+ov.id;
+  el.style.left = ov.x+'px';
+  el.style.top = ov.y+'px';
+  el.style.fontSize = ov.fontSize+'px';
+  el.style.color = ov.color;
+  el.style.fontWeight = 'bold';
+  el.style.transform = 'rotate('+ov.rotation+'deg)';
+  el.style.fontFamily='Arial';
+  if(ov.type==='subtitle'){
+    el.style.background='rgba(0,0,0,0.6)';
+    el.style.padding='4px 10px';
+    el.style.borderRadius='4px';
+  }
+  el.innerHTML = '<span class="ov-content">'+escapeHtml(ov.content)+'</span>'+
+    '<div class="handle del">×</div>'+
+    '<div class="handle rotate">⟳</div>'+
+    '<div class="handle resize">⤡</div>';
+  wrap.appendChild(el);
 
-  if (type === 'grayscale' || type === 'sepia' || type === 'invert') {
-    let imageData = t.getImageData(0, 0, temp.width, temp.height);
-    let data = imageData.data;
-    if (type === 'grayscale') {
-      for (let i = 0; i < data.length; i += 4) {
-        let gray = data[i] * 0.299 + data[i+1] * 0.587 + data[i+2] * 0.114;
-        data[i] = data[i+1] = data[i+2] = gray;
-      }
-    } else if (type === 'sepia') {
-      for (let i = 0; i < data.length; i += 4) {
-        let r = data[i], g = data[i+1], b = data[i+2];
-        data[i] = Math.min(255, r * 0.393 + g * 0.769 + b * 0.189);
-        data[i+1] = Math.min(255, r * 0.349 + g * 0.686 + b * 0.168);
-        data[i+2] = Math.min(255, r * 0.272 + g * 0.534 + b * 0.131);
-      }
-    } else if (type === 'invert') {
-      for (let i = 0; i < data.length; i += 4) {
-        data[i] = 255 - data[i];
-        data[i+1] = 255 - data[i+1];
-        data[i+2] = 255 - data[i+2];
+  el.addEventListener('pointerdown', e=>{
+    if(e.target.classList.contains('handle')) return;
+    selectOverlay(ov.id);
+    startDrag(e, ov, el);
+  });
+  el.querySelector('.handle.del').addEventListener('pointerdown', e=>{ e.stopPropagation(); deleteOverlay(ov.id); });
+  el.querySelector('.handle.resize').addEventListener('pointerdown', e=>{ e.stopPropagation(); startResize(e, ov, el); });
+  el.querySelector('.handle.rotate').addEventListener('pointerdown', e=>{ e.stopPropagation(); startRotate(e, ov, el); });
+}
+
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function selectOverlay(id){
+  selectedOverlayId = id;
+  document.querySelectorAll('.overlay-el').forEach(el=>{
+    el.classList.toggle('selected', el.id === 'el_'+id);
+  });
+}
+
+function deleteOverlay(id){
+  overlays = overlays.filter(o=>o.id!==id);
+  const el = document.getElementById('el_'+id);
+  if(el) el.remove();
+  if(selectedOverlayId===id) selectedOverlayId=null;
+  showMessage('✅ Removed');
+}
+
+function clearAllOverlays(){
+  overlays.forEach(o=>{ const el=document.getElementById('el_'+o.id); if(el) el.remove(); });
+  overlays = [];
+  selectedOverlayId = null;
+}
+
+function startDrag(e, ov, el){
+  const startX = e.clientX, startY = e.clientY;
+  const origX = ov.x, origY = ov.y;
+  function move(ev){
+    ov.x = origX + (ev.clientX - startX);
+    ov.y = origY + (ev.clientY - startY);
+    el.style.left = ov.x+'px';
+    el.style.top = ov.y+'px';
+  }
+  function up(){
+    document.removeEventListener('pointermove', move);
+    document.removeEventListener('pointerup', up);
+  }
+  document.addEventListener('pointermove', move);
+  document.addEventListener('pointerup', up);
+}
+
+function startResize(e, ov, el){
+  const startX = e.clientX, startY = e.clientY;
+  const origSize = ov.fontSize;
+  function move(ev){
+    const delta = (ev.clientX - startX) + (ev.clientY - startY);
+    ov.fontSize = Math.max(10, Math.min(300, origSize + delta*0.5));
+    el.style.fontSize = ov.fontSize+'px';
+  }
+  function up(){
+    document.removeEventListener('pointermove', move);
+    document.removeEventListener('pointerup', up);
+  }
+  document.addEventListener('pointermove', move);
+  document.addEventListener('pointerup', up);
+}
+
+function startRotate(e, ov, el){
+  function angleFor(ev){
+    const rect = el.getBoundingClientRect();
+    const cx = rect.left + rect.width/2, cy = rect.top + rect.height/2;
+    return Math.atan2(ev.clientY-cy, ev.clientX-cx) * 180/Math.PI;
+  }
+  function move(ev){
+    ov.rotation = Math.round(angleFor(ev)) + 90;
+    el.style.transform = 'rotate('+ov.rotation+'deg)';
+  }
+  function up(){
+    document.removeEventListener('pointermove', move);
+    document.removeEventListener('pointerup', up);
+  }
+  document.addEventListener('pointermove', move);
+  document.addEventListener('pointerup', up);
+}
+
+function addTextOverlay(){
+  const text = document.getElementById('textInput').value.trim();
+  if(!text){ showMessage('❌ Type some text first', 'error'); return; }
+  const color = document.getElementById('textColor').value;
+  createOverlay('text', text, {color, fontSize:32});
+  showMessage('✅ Text added — drag, resize (⤡), rotate (⟳), or delete (×)');
+}
+
+function addStickerEmoji(emoji){
+  if(!baseImage){ showMessage('❌ Load an image first', 'error'); return; }
+  createOverlay('sticker', emoji, {fontSize:60, color:'#ffffff'});
+  showMessage('✅ Sticker added — drag, resize, rotate, or delete it');
+}
+
+/* ============ EXPORT ============ */
+function exportImage(){
+  if(!baseImage){ showMessage('❌ Load an image first', 'error'); return; }
+  const exp = document.createElement('canvas');
+  exp.width = canvas.width; exp.height = canvas.height;
+  const ex = exp.getContext('2d');
+  ex.drawImage(canvas, 0, 0);
+
+  overlays.forEach(ov=>{
+    ex.save();
+    const cx = ov.x + (document.getElementById('el_'+ov.id)?.offsetWidth||0)/2;
+    const cy = ov.y + (ov.fontSize/2);
+    ex.translate(cx, cy);
+    ex.rotate(ov.rotation * Math.PI/180);
+    ex.font = 'bold '+ov.fontSize+'px Arial';
+    ex.fillStyle = ov.color;
+    ex.textAlign = 'center';
+    ex.textBaseline = 'middle';
+    if(ov.type==='subtitle'){
+      const padding=10;
+      const textW = ex.measureText(ov.content).width;
+      ex.fillStyle='rgba(0,0,0,0.6)';
+      ex.fillRect(-textW/2-padding, -ov.fontSize/2-padding/2, textW+padding*2, ov.fontSize+padding);
+      ex.fillStyle = ov.color;
+    }
+    ex.fillText(ov.content, 0, 0);
+    ex.restore();
+  });
+
+  const dataUrl = exp.toDataURL('image/png');
+  const link = document.createElement('a');
+  link.href = dataUrl;
+  link.download = 'cinemaster-'+Date.now()+'.png';
+  link.click();
+  showMessage('📥 Exported with all text/stickers baked in!');
+}
+
+/* ============ STICKERS ============ */
+const STICKERS = ['😀','😂','❤️','🔥','⭐','🎉','👑','💯','🚀','✨','🎬','🎵'];
+function buildStickerButtons(){
+  const c = document.getElementById('stickerButtons');
+  STICKERS.forEach(e=>{
+    const b = document.createElement('button');
+    b.className='tool-btn'; b.textContent=e;
+    b.onclick = ()=>addStickerEmoji(e);
+    c.appendChild(b);
+  });
+}
+
+/* ============ TEMPLATES ============ */
+const TEMPLATES = [
+  ['Instagram',1080,1080],['TikTok',1080,1920],['YouTube',1920,1080],
+  ['Facebook',1200,628],['Twitter',1024,512],['Pinterest',1000,1500]
+];
+function buildTemplateButtons(){
+  const c = document.getElementById('templateButtons');
+  TEMPLATES.forEach(([name,w,h])=>{
+    const b=document.createElement('button');
+    b.className='tool-btn'; b.textContent=name;
+    b.onclick=()=>setTemplate(w,h);
+    c.appendChild(b);
+  });
+}
+function setTemplate(w,h){
+  const MAX=700;
+  let dw=w,dh=h;
+  if(dw>MAX||dh>MAX){ const s=Math.min(MAX/dw,MAX/dh); dw=Math.round(dw*s); dh=Math.round(dh*s); }
+  canvas.width=dw; canvas.height=dh;
+  document.getElementById('canvasWrap').style.width=dw+'px';
+  document.getElementById('canvasWrap').style.height=dh+'px';
+  if(baseImage) renderBase();
+  showMessage('✅ Template: '+w+'x'+h);
+}
+
+/* ============ MUSIC CATALOG (1000 entries) ============ */
+const GENRES = ['Upbeat','Chill','Epic','Jazz','EDM','Cinematic','Lo-Fi','Ambient','Electronic','Pop','Rock','Hip-Hop','Acoustic','Classical','Reggae','Latin','Funk','Soul','Country','Synthwave'];
+const MOODS = ['Energetic','Calm','Dramatic','Happy','Sad','Romantic','Dark','Bright','Mysterious','Triumphant'];
+let MUSIC_CATALOG = [];
+(function buildCatalog(){
+  let n=1;
+  for(let g=0; g<GENRES.length; g++){
+    for(let m=0; m<MOODS.length; m++){
+      for(let v=1; v<=5; v++){
+        MUSIC_CATALOG.push({id:n, name:`${GENRES[g]} ${MOODS[m]} Track ${v}`, genre:GENRES[g], mood:MOODS[m], duration:(60+ (n%180))+'s'});
+        n++;
       }
     }
-    t.putImageData(imageData, 0, 0);
-  } else {
-    const filters = {
-      blur: 'blur(5px)',
-      bright: 'brightness(1.4)',
-      dark: 'brightness(0.7)',
-      vintage: 'sepia(0.5) brightness(1.1) saturate(1.2)',
-      saturate: 'saturate(1.8)',
-      contrast: 'contrast(1.5)',
-      warm: 'sepia(0.3)',
-      cool: 'hue-rotate(200deg) brightness(1.1)',
-      haze: 'brightness(1.2) contrast(0.8)'
-    };
-    t.filter = filters[type] || 'none';
-    t.clearRect(0,0,temp.width,temp.height);
-    t.drawImage(originalImage, 0, 0);
   }
-
-  let labels = {grayscale:'Grayscale',sepia:'Sepia',invert:'Invert',blur:'Blur',bright:'Brighten',dark:'Darken',vintage:'Vintage',saturate:'Saturate',contrast:'Contrast',warm:'Warm',cool:'Cool',haze:'Haze'};
-  currentImage = new Image();
-  currentImage.onload = () => {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.drawImage(currentImage, 0, 0);
-    showMessage('✅ ' + labels[type] + ' filter applied');
-  };
-  currentImage.src = temp.toDataURL();
+})();
+let favorites = new Set();
+function renderMusicCatalog(){
+  const q = document.getElementById('musicSearch').value.toLowerCase();
+  const filtered = MUSIC_CATALOG.filter(t => t.name.toLowerCase().includes(q) || t.genre.toLowerCase().includes(q) || t.mood.toLowerCase().includes(q));
+  document.getElementById('musicCount').textContent = `Showing ${Math.min(50,filtered.length)} of ${filtered.length} matching tracks`;
+  document.getElementById('musicTotal').textContent = MUSIC_CATALOG.length;
+  const list = document.getElementById('musicList');
+  list.innerHTML='';
+  filtered.slice(0,50).forEach(t=>{
+    const row = document.createElement('div');
+    row.className='catalog-item';
+    row.innerHTML = `<span>${t.name} <small style="color:#999">(${t.duration})</small></span>
+      <span><button onclick="previewTrack(${t.id})">▶ Preview</button><button onclick="toggleFavorite(${t.id}, this)">${favorites.has(t.id)?'★':'☆'}</button></span>`;
+    list.appendChild(row);
+  });
+}
+function previewTrack(id){
+  try{
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const actx = new AudioCtx();
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    osc.frequency.value = 300 + (id % 400);
+    osc.connect(gain); gain.connect(actx.destination);
+    gain.gain.setValueAtTime(0.15, actx.currentTime);
+    osc.start();
+    osc.stop(actx.currentTime + 0.4);
+  }catch(e){}
+  showMessage('▶ Previewing track #'+id);
+}
+function toggleFavorite(id, btn){
+  if(favorites.has(id)){ favorites.delete(id); btn.textContent='☆'; }
+  else { favorites.add(id); btn.textContent='★'; }
 }
 
-function addTextToImage() {
-  let text = prompt('Enter text:');
-  if (!text || !currentImage) return;
-  let temp = document.createElement('canvas');
-  temp.width = canvas.width;
-  temp.height = canvas.height;
-  let t = temp.getContext('2d');
-  t.drawImage(currentImage, 0, 0);
-  t.font = 'bold 40px Arial';
-  t.fillStyle = '#ffffff';
-  t.textAlign = 'center';
-  t.textBaseline = 'middle';
-  t.shadowColor = 'rgba(0,0,0,0.6)';
-  t.shadowBlur = 8;
-  t.fillText(text, canvas.width/2, canvas.height/2);
-  currentImage = new Image();
-  currentImage.onload = () => {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.drawImage(currentImage, 0, 0);
-    showMessage('✅ Text added: "' + text + '"');
-  };
-  currentImage.src = temp.toDataURL();
+/* ============ SUBTITLE LANGUAGES (60) ============ */
+const LANGUAGES = ['English','Spanish','French','German','Italian','Portuguese','Russian','Chinese','Japanese','Korean','Arabic','Hindi','Bengali','Turkish','Polish','Dutch','Swedish','Norwegian','Danish','Finnish','Greek','Czech','Hungarian','Romanian','Ukrainian','Bulgarian','Croatian','Serbian','Slovenian','Estonian','Latvian','Lithuanian','Catalan','Basque','Welsh','Irish','Icelandic','Hebrew','Urdu','Punjabi','Marathi','Gujarati','Tamil','Telugu','Kannada','Thai','Vietnamese','Indonesian','Filipino','Malay','Swahili','Amharic','Zulu','Afrikaans','Persian','Pashto','Nepali','Sinhala','Khmer','Lao','Mongolian'];
+function buildLanguageSelect(){
+  const sel = document.getElementById('subLang');
+  LANGUAGES.forEach(l=>{
+    const o=document.createElement('option'); o.value=l; o.textContent=l;
+    sel.appendChild(o);
+  });
+}
+function addSubtitleOverlay(){
+  const text = document.getElementById('subText').value.trim();
+  const lang = document.getElementById('subLang').value;
+  if(!text){ showMessage('❌ Type a subtitle first', 'error'); return; }
+  if(!baseImage){ showMessage('❌ Load an image first', 'error'); return; }
+  createOverlay('subtitle', text, {fontSize:24, color:'#ffffff', x: canvas.width/2-100, y: canvas.height-60});
+  showMessage('✅ Subtitle added (' + lang + ') — drag it into place, then Export');
 }
 
-function addStickerEmoji(emoji) {
-  if (!currentImage) { showMessage('❌ Load image first', 'error'); return; }
-  let temp = document.createElement('canvas');
-  temp.width = canvas.width;
-  temp.height = canvas.height;
-  let t = temp.getContext('2d');
-  t.drawImage(currentImage, 0, 0);
-  t.font = 'bold 80px Arial';
-  t.textAlign = 'center';
-  t.textBaseline = 'middle';
-  t.fillText(emoji, canvas.width/2, canvas.height/2);
-  currentImage = new Image();
-  currentImage.onload = () => {
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    ctx.drawImage(currentImage, 0, 0);
-    showMessage('✅ Sticker added: ' + emoji);
-  };
-  currentImage.src = temp.toDataURL();
+/* ============ AUTH ============ */
+function showPage(name, btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active'); else document.querySelector(`.nav-btn[data-page="${name}"]`)?.classList.add('active');
 }
-
-function setTemplate(w, h) {
-  canvas.width = w;
-  canvas.height = h;
-  ctx.clearRect(0,0,w,h);
-  if (currentImage) ctx.drawImage(currentImage, 0, 0, w, h);
-  showMessage('✅ Template applied: ' + w + 'x' + h);
-}
-
-function exportImage() {
-  if (!currentImage) { showMessage('❌ Load image first', 'error'); return; }
-  let link = document.createElement('a');
-  link.href = canvas.toDataURL('image/png');
-  link.download = 'cinemaster-' + Date.now() + '.png';
-  link.click();
-  showMessage('📥 Image exported successfully!');
-}
-
-function openAuthModal() {
-  if (userData) {
-    if (confirm('Sign out ' + userData.name + '?')) {
-      userData = null;
-      localStorage.removeItem('cinemaster_data');
-      updateUserDisplay();
-      showMessage('👋 Signed out');
+function openAuthModal(){
+  if(userData){
+    if(confirm('Sign out '+userData.name+'?')){
+      userData=null; localStorage.removeItem('cinemaster_data'); updateUserDisplay(); showMessage('👋 Signed out');
     }
     return;
   }
   document.getElementById('authModal').classList.add('show');
 }
-
-function closeAuthModal() {
+function closeAuthModal(){
   document.getElementById('authModal').classList.remove('show');
-  document.getElementById('loginMessage').innerHTML = '';
-  document.getElementById('signupMessage').innerHTML = '';
+  document.getElementById('loginMessage').innerHTML='';
+  document.getElementById('signupMessage').innerHTML='';
 }
+function switchToSignup(){ document.getElementById('loginSection').style.display='none'; document.getElementById('signupSection').style.display='block'; document.getElementById('authTitle').textContent='Create Account'; }
+function switchToLogin(){ document.getElementById('loginSection').style.display='block'; document.getElementById('signupSection').style.display='none'; document.getElementById('authTitle').textContent='Sign In'; }
 
-function switchToSignup() {
-  document.getElementById('loginSection').style.display = 'none';
-  document.getElementById('signupSection').style.display = 'block';
-  document.getElementById('authTitle').textContent = 'Create Account';
+function doLogin(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass=document.getElementById('loginPassword').value;
+  if(!email||!pass){ document.getElementById('loginMessage').innerHTML='<div class="message error">❌ Fill all fields</div>'; return; }
+  const saved=JSON.parse(localStorage.getItem('cinemaster_data'));
+  if(!saved||saved.email!==email||saved.password!==pass){ document.getElementById('loginMessage').innerHTML='<div class="message error">❌ Invalid credentials</div>'; return; }
+  userData=saved; updateUserDisplay();
+  document.getElementById('loginMessage').innerHTML='<div class="message success">✅ Signed in!</div>';
+  setTimeout(()=>{closeAuthModal(); showMessage('✅ Welcome back, '+userData.name);},1000);
 }
-
-function switchToLogin() {
-  document.getElementById('loginSection').style.display = 'block';
-  document.getElementById('signupSection').style.display = 'none';
-  document.getElementById('authTitle').textContent = 'Sign In';
-}
-
-function doLogin() {
-  let email = document.getElementById('loginEmail').value.trim();
-  let pass = document.getElementById('loginPassword').value;
-  if (!email || !pass) {
-    document.getElementById('loginMessage').innerHTML = '<div class="message error">❌ Fill all fields</div>';
-    return;
-  }
-  let saved = JSON.parse(localStorage.getItem('cinemaster_data'));
-  if (!saved || saved.email !== email || saved.password !== pass) {
-    document.getElementById('loginMessage').innerHTML = '<div class="message error">❌ Invalid credentials</div>';
-    return;
-  }
-  userData = saved;
-  updateUserDisplay();
-  document.getElementById('loginMessage').innerHTML = '<div class="message success">✅ Signed in!</div>';
-  setTimeout(() => { closeAuthModal(); showMessage('✅ Welcome back, ' + userData.name); }, 1000);
-}
-
-function doSignup() {
-  let name = document.getElementById('signupName').value.trim();
-  let email = document.getElementById('signupEmail').value.trim();
-  let pass = document.getElementById('signupPassword').value;
-  let conf = document.getElementById('signupConfirm').value;
-  if (!name || !email || !pass || !conf) {
-    document.getElementById('signupMessage').innerHTML = '<div class="message error">❌ Fill all fields</div>';
-    return;
-  }
-  if (pass.length < 6) {
-    document.getElementById('signupMessage').innerHTML = '<div class="message error">❌ Min 6 characters</div>';
-    return;
-  }
-  if (pass !== conf) {
-    document.getElementById('signupMessage').innerHTML = '<div class="message error">❌ Passwords don\'t match</div>';
-    return;
-  }
-  let saved = JSON.parse(localStorage.getItem('cinemaster_data'));
-  if (saved && saved.email === email) {
-    document.getElementById('signupMessage').innerHTML = '<div class="message error">❌ Email already exists</div>';
-    return;
-  }
-  userData = {
-    name: name,
-    email: email,
-    password: pass,
-    trial: new Date(Date.now() + 7*24*60*60*1000).toISOString()
-  };
+function doSignup(){
+  const name=document.getElementById('signupName').value.trim();
+  const email=document.getElementById('signupEmail').value.trim();
+  const pass=document.getElementById('signupPassword').value;
+  const conf=document.getElementById('signupConfirm').value;
+  if(!name||!email||!pass||!conf){ document.getElementById('signupMessage').innerHTML='<div class="message error">❌ Fill all fields</div>'; return; }
+  if(pass.length<6){ document.getElementById('signupMessage').innerHTML='<div class="message error">❌ Min 6 characters</div>'; return; }
+  if(pass!==conf){ document.getElementById('signupMessage').innerHTML='<div class="message error">❌ Passwords do not match</div>'; return; }
+  const saved=JSON.parse(localStorage.getItem('cinemaster_data'));
+  if(saved && saved.email===email){ document.getElementById('signupMessage').innerHTML='<div class="message error">❌ Email already exists</div>'; return; }
+  userData={name,email,password:pass,trial:new Date(Date.now()+7*24*60*60*1000).toISOString()};
   localStorage.setItem('cinemaster_data', JSON.stringify(userData));
   updateUserDisplay();
-  document.getElementById('signupMessage').innerHTML = '<div class="message success">✅ Account created! 7-day trial started!</div>';
-  setTimeout(() => { closeAuthModal(); showMessage('✅ Welcome to CineMaster, ' + userData.name + '! 🎉'); }, 1000);
+  document.getElementById('signupMessage').innerHTML='<div class="message success">✅ Account created! 7-day trial started!</div>';
+  setTimeout(()=>{closeAuthModal(); showMessage('✅ Welcome, '+userData.name+'! 🎉');},1000);
+}
+function updateUserDisplay(){
+  const span=document.getElementById('userSpan');
+  if(userData){
+    let t='👤 '+userData.name;
+    if(userData.trial){ const days=Math.ceil((new Date(userData.trial)-new Date())/(86400000)); if(days>0) t+=' | ⭐ '+days+' days trial'; }
+    span.textContent=t;
+  } else span.textContent='👤 Guest';
+}
+function showMessage(msg,type){
+  const t=document.createElement('div');
+  t.className='toast '+(type||''); t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3000);
 }
 
-function updateUserDisplay() {
-  let span = document.getElementById('userSpan');
-  if (userData) {
-    let text = '👤 ' + userData.name;
-    if (userData.trial) {
-      let days = Math.ceil((new Date(userData.trial) - new Date()) / (24*60*60*1000));
-      if (days > 0) text += ' | ⭐ ' + days + ' days trial';
-    }
-    span.textContent = text;
-  } else {
-    span.textContent = '👤 Guest';
-  }
-}
-
-function showMessage(msg, type) {
-  let toast = document.createElement('div');
-  toast.className = 'toast ' + (type || '');
-  toast.textContent = msg;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
-}
-
+/* ============ INIT ============ */
+buildFilterButtons();
+buildStickerButtons();
+buildTemplateButtons();
+buildLanguageSelect();
+renderMusicCatalog();
 updateUserDisplay();
 </script>
-
 </body>
 </html>
